@@ -462,8 +462,20 @@ const PRIO = { low:{c:'tg-x',l:'Baja'}, med:{c:'tg-a',l:'Media'}, high:{c:'tg-b'
 let S = { users:[], sprints:[], tasks:[], hours:[], bonus:[], log:[] };
 let ME = null, pinBuf = '', pinTarget = null;
 
-const save  = () => localStorage.setItem(KEY, JSON.stringify(S));
-function load() { try { const d=localStorage.getItem(KEY); if(d) S=JSON.parse(d); } catch(e){} }
+const save = () => {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(S));
+  } catch(e) {
+    console.error('Error guardando datos:', e);
+    alert('⚠️ No se pudo guardar. Abre el archivo con un servidor local o usa Chrome con --allow-file-access-from-files');
+  }
+}
+function load() {
+  try {
+    const d = localStorage.getItem(KEY);
+    if(d) S = { ...S, ...JSON.parse(d) };
+  } catch(e) { console.error('Error cargando datos:', e); }
+}
 const uid     = () => Math.random().toString(36).slice(2,9);
 const fmt     = (n,d=0) => (+n||0).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d})+'€';
 const fmtH    = n => (+n||0).toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})+'h';
@@ -519,10 +531,15 @@ function renderWho() {
 function createAdmin() {
   const name=prompt('Tu nombre (serás admin):'); if(!name?.trim()) return;
   const pin=prompt('PIN de 4 dígitos:'); if(!pin||!/^\d{4}$/.test(pin)) { alert('PIN debe ser 4 dígitos'); return; }
-  S.users.push({ id:uid(), name:name.trim(), pin:hashPin(pin), isAdmin:true });
-  ME = { ...S.users[0] };
+  const newUser = { id:uid(), name:name.trim(), pin:hashPin(pin), isAdmin:true };
+  S.users.push(newUser);
+  ME = { ...newUser };
+  // Save session so it persists on reload
+  try { localStorage.setItem('hp_session', JSON.stringify({id:ME.id})); } catch(e){}
   log('USUARIO','Admin creado: '+name.trim(),'','admin');
-  save(); renderWho();
+  save();
+  // Enter app directly — no need to re-enter PIN
+  enterApp();
 }
 function addMemberWho() {
   const aN=prompt('Nombre del admin:');
@@ -995,10 +1012,40 @@ function delUser(userId, userName) {
 }
 
 // INIT
+// Test localStorage works
+try {
+  localStorage.setItem('hp_test', '1');
+  if(localStorage.getItem('hp_test') !== '1') throw new Error('read failed');
+  localStorage.removeItem('hp_test');
+} catch(e) {
+  document.body.innerHTML = `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#1E1C18;font-family:'Space Mono',monospace;text-align:center;padding:20px">
+    <div>
+      <div style="font-size:48px;margin-bottom:16px">🥔</div>
+      <div style="color:#C9A428;font-size:14px;letter-spacing:2px;margin-bottom:12px">ERROR: localStorage no disponible</div>
+      <div style="color:rgba(237,232,223,.4);font-size:11px;line-height:2;max-width:400px">
+        Chrome bloquea localStorage en archivos locales.<br>
+        <strong style="color:rgba(237,232,223,.7)">Solución:</strong> abre el archivo desde un servidor local.<br><br>
+        Opción rápida en Terminal:<br>
+        <span style="background:rgba(255,255,255,.08);padding:4px 10px;border-radius:4px;color:#F0D060">npx serve .</span><br>
+        y luego abre <span style="color:#F0D060">localhost:3000</span> en el navegador
+      </div>
+    </div>
+  </div>`;
+  throw new Error('localStorage not available');
+}
+
 load();
-const _s=localStorage.getItem('hp_session');
-if(_s) { try { const {id}=JSON.parse(_s); const u=S.users.find(x=>x.id===id); if(u){ME=u;enterApp();}else renderWho(); } catch(e){renderWho();} }
-else renderWho();
+const _s = localStorage.getItem('hp_session');
+if(_s) {
+  try {
+    const {id} = JSON.parse(_s);
+    const u = S.users.find(x=>x.id===id);
+    if(u) { ME=u; enterApp(); }
+    else renderWho();
+  } catch(e) { renderWho(); }
+} else {
+  renderWho();
+}
 </script>
 </body>
 </html>
