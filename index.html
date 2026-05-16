@@ -254,7 +254,34 @@ select.finp{cursor:pointer}
   <div class="loading-txt">CONECTANDO A FIREBASE…</div>
 </div>
 
-<!-- WHO -->
+<!-- FIRST RUN -->
+<div class="screen" id="s-firstrun" style="background:var(--dark);align-items:center;justify-content:center;flex-direction:column">
+  <div style="background:#252218;border:1px solid rgba(201,164,40,.2);border-radius:16px;padding:32px 36px;width:400px;max-width:95vw;text-align:center">
+    <div style="font-size:48px;margin-bottom:12px">🥔</div>
+    <div style="font-family:'Bangers',cursive;font-size:28px;letter-spacing:3px;color:var(--gold-l);margin-bottom:4px">PRIMER ACCESO</div>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(237,232,223,.3);letter-spacing:2px;margin-bottom:24px">CREA EL ADMIN DEL PROYECTO</div>
+    <div style="text-align:left;margin-bottom:12px">
+      <label style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(237,232,223,.4);display:block;margin-bottom:5px">TU NOMBRE</label>
+      <input type="text" id="fr-name" placeholder="Ej: Pilar"
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(201,164,40,.2);color:var(--gold-l);font-family:'DM Sans',sans-serif;font-size:15px;padding:10px 14px;border-radius:8px;outline:none;transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(201,164,40,.2)'">
+    </div>
+    <div style="text-align:left;margin-bottom:20px">
+      <label style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(237,232,223,.4);display:block;margin-bottom:5px">PIN (4 DÍGITOS)</label>
+      <input type="password" id="fr-pin" maxlength="4" placeholder="0000" inputmode="numeric"
+        style="width:100%;background:rgba(255,255,255,.07);border:1px solid rgba(201,164,40,.2);color:var(--gold-l);font-family:'Bangers',cursive;font-size:28px;letter-spacing:8px;padding:10px 14px;border-radius:8px;outline:none;text-align:center;transition:border-color .15s"
+        onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='rgba(201,164,40,.2)'"
+        onkeydown="if(event.key==='Enter') createFirstAdmin()">
+    </div>
+    <button onclick="createFirstAdmin()"
+      style="width:100%;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:12px;background:var(--gold);border:none;border-radius:8px;color:var(--dark);cursor:pointer;font-weight:700;transition:opacity .15s"
+      onmouseover="this.style.opacity='.85'" onmouseout="this.style.opacity='1'">
+      CREAR ADMIN Y ENTRAR →
+    </button>
+    <div id="fr-msg" style="font-family:'Space Mono',monospace;font-size:9px;margin-top:12px;min-height:14px;color:rgba(237,232,223,.4)"></div>
+  </div>
+</div>
+
 <div class="screen" id="s-who">
   <div style="text-align:center;width:100%;padding:40px 20px">
     <div class="who-logo">🥔</div>
@@ -1066,7 +1093,31 @@ function renderAH() {
 }
 
 // ── USER CRUD ────────────────────────────────────────────
-async function addUser() {
+async function createFirstAdmin() {
+  const name = sel('fr-name').value.trim();
+  const pin  = sel('fr-pin').value.trim();
+  const msg  = sel('fr-msg');
+  if(!name) { msg.style.color='var(--red)'; msg.textContent='Introduce tu nombre'; return; }
+  if(!/^\d{4}$/.test(pin)) { msg.style.color='var(--red)'; msg.textContent='El PIN debe ser 4 dígitos'; return; }
+  msg.style.color='rgba(237,232,223,.4)'; msg.textContent='Guardando en Firebase…';
+  try {
+    const ref = await db.collection('users').add({
+      name, pin:hashPin(pin), isAdmin:true, createdAt:new Date().toISOString()
+    });
+    await db.collection('log').add({
+      ts:new Date().toISOString(), userName:name,
+      type:'USUARIO', desc:`Admin creado: ${name}`, old:'', nw:'admin'
+    });
+    ME = { id:ref.id, name, isAdmin:true };
+    try { localStorage.setItem('hp_session', JSON.stringify({id:ME.id})); } catch(e){}
+    msg.style.color='var(--green)'; msg.textContent='✓ Admin creado. Entrando…';
+    setTimeout(()=>enterApp(), 600);
+  } catch(e) {
+    msg.style.color='var(--red)'; msg.textContent='Error: '+e.message;
+  }
+}
+
+
   const name=gv('au-name').trim(), pin=gv('au-pin').trim(), role=gv('au-role');
   const msg = sel('au-msg');
   if(!name) { msg.style.color='var(--red)'; msg.textContent='El nombre es obligatorio'; return; }
@@ -1175,12 +1226,17 @@ async function init() {
     }
   } catch(e){}
 
-  renderWho();
-  // Also start a live listener for who screen (new users appear in real-time)
-  db.collection('users').orderBy('name').onSnapshot(snap=>{
-    C.users = snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!ME) renderWho();
-  });
+  // No session or user not found — show who or first-run
+  if(C.users.length === 0) {
+    showSc('s-firstrun');
+  } else {
+    renderWho();
+    // Live listener for who screen
+    db.collection('users').orderBy('name').onSnapshot(snap=>{
+      C.users = snap.docs.map(d=>({id:d.id,...d.data()}));
+      if(!ME) renderWho();
+    });
+  }
 }
 
 init();
