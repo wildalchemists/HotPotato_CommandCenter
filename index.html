@@ -378,11 +378,13 @@ select.form-input { cursor: pointer; }
   </div>
   <div class="h-right">
     <span id="save-indicator" class="h-save-indicator">● GUARDADO</span>
+    <div id="h-user-chip" style="display:none;font-family:'Space Mono',monospace;font-size:10px;color:var(--gold);letter-spacing:1px;background:rgba(201,164,40,0.1);border:1px solid rgba(201,164,40,0.2);padding:4px 12px;border-radius:8px;"></div>
     <div id="project-name-display" class="h-project-name" onclick="editProjectName()" title="Click para editar">HOT POTATO</div>
     <div class="flex-row gap4">
       <div class="live-dot"></div>
       <div class="h-clock" id="live-clock">--:--:--</div>
     </div>
+    <button id="btn-logout" style="display:none;font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1px;padding:4px 10px;background:transparent;border:1px solid rgba(237,232,223,.15);color:rgba(237,232,223,.4);border-radius:6px;cursor:pointer" onclick="logout()">SALIR</button>
   </div>
 </div>
 
@@ -820,28 +822,39 @@ select.form-input { cursor: pointer; }
     </div>
   </div>
 
-  <!-- Configuración del proyecto -->
-  <div class="panel">
-    <div class="panel-header"><div class="ph-left"><div class="panel-dot" style="background:var(--amber);"></div>CONFIGURACIÓN DEL PROYECTO</div></div>
-    <div class="panel-body">
-      <div class="form-grid">
-        <div class="form-row">
-          <label class="form-label">NOMBRE DEL PROYECTO</label>
-          <input type="text" class="form-input" id="cfg-name" value="Hot Potato" oninput="saveConfig()">
-        </div>
-        <div class="form-row">
-          <label class="form-label">FECHA DE INICIO</label>
-          <input type="date" class="form-input" id="cfg-start" oninput="saveConfig()">
-        </div>
-        <div class="form-row">
-          <label class="form-label">FECHA DE LANZAMIENTO (STEAM)</label>
-          <input type="date" class="form-input" id="cfg-launch" oninput="saveConfig()">
-        </div>
-        <div class="form-row">
-          <label class="form-label">DURACIÓN DE SPRINTS (SEMANAS)</label>
-          <input type="number" class="form-input" id="cfg-sprintLen" value="2" min="1" max="8" oninput="saveConfig()">
-        </div>
+  <!-- CONTRIBUCIONES DEL EQUIPO -->
+  <div class="panel" style="margin-top:14px">
+    <div class="panel-header">
+      <div class="ph-left"><div class="panel-dot" style="background:var(--green);"></div>CONTRIBUCIONES DEL EQUIPO</div>
+      <button class="btn btn-amber btn-sm" onclick="openContrib()">+ MI CONTRIBUCIÓN</button>
+    </div>
+    <div class="panel-body" id="contrib-list">
+      <div style="color:var(--muted);font-size:11px;text-align:center;padding:16px">Sin contribuciones aún</div>
+    </div>
+  </div>
+
+  <!-- ADD CONTRIB FORM (inline) -->
+  <div id="contrib-form" style="display:none;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;margin-top:10px">
+    <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">AÑADIR MI CONTRIBUCIÓN</div>
+    <div class="form-grid">
+      <div class="form-row"><label class="form-label">NOMBRE / CONCEPTO *</label><input type="text" class="form-input" id="c-name" placeholder="Ej: Licencia Adobe, Micrófono…"></div>
+      <div class="form-row"><label class="form-label">IMPORTE (€)</label><input type="number" class="form-input" id="c-amount" min="0" step="0.01" placeholder="0"></div>
+      <div class="form-row"><label class="form-label">CATEGORÍA</label>
+        <select class="form-input" id="c-category">
+          <option value="software">Software / Licencia</option>
+          <option value="hardware">Hardware / Equipo</option>
+          <option value="servicio">Servicio externo</option>
+          <option value="material">Material</option>
+          <option value="otro">Otro</option>
+        </select>
       </div>
+      <div class="form-row"><label class="form-label">FECHA</label><input type="date" class="form-input" id="c-date"></div>
+    </div>
+    <div class="form-row"><label class="form-label">DESCRIPCIÓN</label><input type="text" class="form-input" id="c-desc" placeholder="Descripción opcional…"></div>
+    <div class="form-row"><label class="form-label">URL DE IMAGEN (opcional)</label><input type="url" class="form-input" id="c-img" placeholder="https://… (factura, foto, etc.)"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-amber" onclick="saveContrib()" style="flex:1;justify-content:center">✓ GUARDAR</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeContrib()">CANCELAR</button>
     </div>
   </div>
 
@@ -1155,7 +1168,148 @@ select.form-input { cursor: pointer; }
 <!-- ════════════════════════════════════════════════
      JAVASCRIPT
 ════════════════════════════════════════════════ -->
-<script>
+<script type="module">
+import { initializeApp }                          from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, doc,
+         addDoc, updateDoc, deleteDoc, setDoc,
+         onSnapshot, query, orderBy, getDoc,
+         where, getDocs }                         from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// ── AUTH GUARD ────────────────────────────────────────────
+const ME = JSON.parse(sessionStorage.getItem('hp_user') || 'null');
+if (!ME?.id) { window.location.href = 'firebase-auth.html'; }
+
+// ── FIREBASE ──────────────────────────────────────────────
+const app = initializeApp({
+  apiKey:            "AIzaSyAFvf31Iv5aj98MjSs_uiVQ2sR9fWW7MjI",
+  authDomain:        "hot-potato-cc.firebaseapp.com",
+  projectId:         "hot-potato-cc",
+  storageBucket:     "hot-potato-cc.firebasestorage.app",
+  messagingSenderId: "1022137605356",
+  appId:             "1:1022137605356:web:b52d3ba53887caf15659c9"
+});
+const db    = getFirestore(app);
+const col   = name => collection(db, name);
+const ref   = (name, id) => doc(db, name, id);
+const STATE_DOC = doc(db, 'project', 'main');
+
+// ── SHOW USER IN HEADER ───────────────────────────────────
+const chip = document.getElementById('h-user-chip');
+const btnLogout = document.getElementById('btn-logout');
+if(chip)    { chip.textContent = ME.name + (ME.isAdmin ? ' · ADMIN' : ''); chip.style.display = ''; }
+if(btnLogout) btnLogout.style.display = '';
+
+window.logout = function() {
+  sessionStorage.removeItem('hp_user');
+  window.location.href = 'firebase-auth.html';
+};
+
+// ── CONTRIBUTIONS STATE ────────────────────────────────────
+let contributions = [];
+onSnapshot(query(col('contributions'), orderBy('date','desc')), snap => {
+  contributions = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderContributions();
+});
+
+// ── CONTRIBUTIONS CRUD ────────────────────────────────────
+window.openContrib  = () => { document.getElementById('contrib-form').style.display=''; };
+window.closeContrib = () => { document.getElementById('contrib-form').style.display='none'; };
+
+window.saveContrib = async function() {
+  const name = document.getElementById('c-name').value.trim();
+  if(!name) { alert('El nombre es obligatorio'); return; }
+  try {
+    await addDoc(col('contributions'), {
+      userId:   ME.id,
+      userName: ME.name,
+      name,
+      amount:   +document.getElementById('c-amount').value || 0,
+      category: document.getElementById('c-category').value,
+      date:     document.getElementById('c-date').value || new Date().toISOString().split('T')[0],
+      desc:     document.getElementById('c-desc').value,
+      imageUrl: document.getElementById('c-img').value,
+      createdAt: new Date().toISOString()
+    });
+    ['c-name','c-amount','c-desc','c-img','c-date'].forEach(id=>{ const e=document.getElementById(id); if(e) e.value=''; });
+    closeContrib();
+  } catch(e) { alert('Error: '+e.message); }
+};
+
+window.deleteContrib = async function(id) {
+  const c = contributions.find(x=>x.id===id);
+  if(!c) return;
+  if(c.userId !== ME.id && !ME.isAdmin) { alert('Solo puedes borrar tus propias contribuciones'); return; }
+  if(!confirm(`¿Eliminar "${c.name}"?`)) return;
+  try { await deleteDoc(ref('contributions',id)); } catch(e) { alert('Error: '+e.message); }
+};
+
+function renderContributions() {
+  const el = document.getElementById('contrib-list'); if(!el) return;
+  if(!contributions.length) {
+    el.innerHTML = '<div style="color:var(--muted);font-size:11px;text-align:center;padding:16px">Sin contribuciones aún — añade la primera</div>';
+    return;
+  }
+  const CAT = { software:'💾 Software', hardware:'🖥 Hardware', servicio:'🔧 Servicio', material:'📦 Material', otro:'📎 Otro' };
+  const total = contributions.reduce((s,c)=>s+(+c.amount||0),0);
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px">
+      ${contributions.map(c=>`
+        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+          ${c.imageUrl?`<img src="${c.imageUrl}" alt="" style="width:100%;height:120px;object-fit:cover;border-bottom:1px solid var(--border)" onerror="this.style.display='none'">` : ''}
+          <div style="padding:12px">
+            <div style="font-weight:600;color:var(--text);margin-bottom:4px">${c.name}</div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+              <span style="font-family:'Space Mono',monospace;font-size:8px;color:var(--muted)">${CAT[c.category]||c.category} · ${c.date||'—'}</span>
+              <span style="font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:var(--green)">${c.amount?fmt(c.amount):'—'}</span>
+            </div>
+            ${c.desc?`<div style="font-size:11px;color:var(--muted);margin-bottom:6px">${c.desc}</div>`:''}
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--gold)">por ${c.userName}</span>
+              ${c.userId===ME.id||ME.isAdmin?`<button class="btn btn-ghost btn-sm" style="font-size:7px;padding:2px 6px" onclick="window.deleteContrib('${c.id}')">🗑</button>`:''}
+            </div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+      <span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">${contributions.length} CONTRIBUCIONES · TOTAL</span>
+      <span style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--green)">${fmt(total)}</span>
+    </div>`;
+}
+
+// ── FIREBASE SAVE/LOAD ─────────────────────────────────────
+// Replaces localStorage save/load — state persists in Firestore project/main doc
+let _saving = false;
+async function save() {
+  if(_saving) return;
+  _saving = true;
+  try {
+    await setDoc(STATE_DOC, state, { merge: true });
+    const el = document.getElementById('save-indicator');
+    if(el) { el.textContent='● GUARDADO'; el.className='h-save-indicator saved'; setTimeout(()=>{ el.textContent='● FIREBASE'; el.className='h-save-indicator'; },2000); }
+  } catch(e) { console.error('Save error', e); }
+  _saving = false;
+}
+
+async function load() {
+  try {
+    const snap = await getDoc(STATE_DOC);
+    if(snap.exists()) {
+      const data = snap.data();
+      state = { ...state, ...data };
+    }
+  } catch(e) { console.error('Load error', e); }
+}
+
+// Live listener — any change from any user updates everyone
+onSnapshot(STATE_DOC, snap => {
+  if(snap.exists()) {
+    const data = snap.data();
+    state = { ...state, ...data };
+    renderAll();
+    syncConfig();
+  }
+});
+
 // ─── STATE ───
 let state = {
   project: { name:'Hot Potato', startDate:'', launchDate:'', sprintLen:2 },
@@ -1252,21 +1406,7 @@ const tag   = (text,cls) => `<span class="tag ${cls}">${text}</span>`;
 const tagS  = s => { const c=STATUS_CFG[s]||{label:s,cls:'tg-x'}; return tag(c.label,c.cls); };
 const tagT  = t => { const c=TYPE_CFG[t]||{label:t,cls:'tg-x'}; return tag(c.label,c.cls); };
 
-// ─── PERSIST ───
-function save() {
-  try {
-    localStorage.setItem('hp_dashboard', JSON.stringify(state));
-    const el = document.getElementById('save-indicator');
-    el.textContent = '● GUARDADO'; el.className = 'h-save-indicator saved';
-    setTimeout(()=>{ el.textContent='● AUTO-SAVE'; el.className='h-save-indicator'; }, 2000);
-  } catch(e){}
-}
-function load() {
-  try {
-    const d = localStorage.getItem('hp_dashboard');
-    if (d) state = JSON.parse(d);
-  } catch(e){}
-}
+// ─── PERSIST — handled by Firebase above ───
 
 // ─── TABS ───
 function switchTab(id) {
@@ -2044,42 +2184,45 @@ if (state.vars) {
   setV2('var-invest',sv.invest);
   setV2('var-mkt',   sv.mkt);
 }
-applyVars();
-renderAll();
-setInterval(()=>{ updateClock(); }, 1000);
-updateClock();
 
-// Seed demo data if empty
-if(!state.roles.length && !state.tasks.length) {
-  state.roles = [
-    { id:uid(), name:'Game Designer / Dev', type:'interno',  rate:35, hpw:40, weeks:16, notes:'Solodev principal' },
-    { id:uid(), name:'Artista 2D',           type:'freelance', rate:45, hpw:20, weeks:8,  notes:'' },
-    { id:uid(), name:'Músico / Audio',        type:'freelance', rate:40, hpw:10, weeks:6,  notes:'' },
-  ];
-  state.channels = [
-    { id:uid(), name:'TikTok / Reels',  type:'social',     status:'planificado', budget:500,  reach:50000, cpa:0, roi:150, notes:'' },
-    { id:uid(), name:'Steam Next Fest', type:'store',      status:'planificado', budget:0,    reach:100000, cpa:0, roi:400, notes:'Sin coste directo' },
-    { id:uid(), name:'Press Kit / PR',  type:'pr',         status:'planificado', budget:800,  reach:20000, cpa:0, roi:200, notes:'' },
-    { id:uid(), name:'Discord Community',type:'community', status:'activo',     budget:200,  reach:5000,  cpa:0, roi:300, notes:'' },
-  ];
-  state.costs = [
-    { id:uid(), name:'Unity Pro License',     category:'software',      monthly:200,  notes:'' },
-    { id:uid(), name:'Adobe CC',              category:'software',      monthly:60,   notes:'' },
-    { id:uid(), name:'Servidor / Hosting',    category:'infraestructura',monthly:30,  notes:'' },
-    { id:uid(), name:'Contabilidad',          category:'contabilidad',  monthly:80,   notes:'Gestor externo' },
-  ];
-  state.milestones = [
-    { id:uid(), name:'Prototipo jugable',   area:'produccion', status:'done',     date:'', notes:'Core loop funcionando' },
-    { id:uid(), name:'Alpha interna',       area:'produccion', status:'active',   date:'', notes:'' },
-    { id:uid(), name:'Arte finalizado',     area:'arte',       status:'pendiente',date:'', notes:'' },
-    { id:uid(), name:'Steam Page Live',     area:'steam',      status:'pendiente',date:'', notes:'Wishlist campaign' },
-    { id:uid(), name:'Beta pública',        area:'qa',         status:'pendiente',date:'', notes:'' },
-    { id:uid(), name:'Trailer de lanzamiento',area:'marketing',status:'pendiente',date:'', notes:'' },
-    { id:uid(), name:'🚀 LAUNCH DAY',        area:'launch',     status:'pendiente',date:'', notes:'Hot Potato en Steam' },
-  ];
-  save();
+// ── EXPOSE TO WINDOW (required for type="module") ────────
+Object.assign(window, {
+  switchTab, openModal, closeModal,
+  saveRole, deleteRole,
+  saveTask, deleteTask,
+  saveChannel, deleteChannel,
+  saveCampaign, deleteCampaign,
+  saveCost, deleteCost,
+  saveMilestone, deleteMilestone,
+  saveConfig, editProjectName,
+  applyVars, renderTasks,
+  openContrib, closeContrib, saveContrib,
+});
+
+// ── INIT ─────────────────────────────────────────────────
+async function init() {
+  await load();
+  applyVars();
   renderAll();
+  syncConfig();
+  setInterval(updateClock, 1000);
+  updateClock();
+  // Seed demo data only if truly empty and admin
+  if(ME.isAdmin && !state.roles?.length && !state.tasks?.length) {
+    state.roles = [
+      { id:uid(), name:'Game Designer / Producer', type:'interno',  rate:10, hpw:4, weeks:16, notes:'' },
+      { id:uid(), name:'Artista 2D',               type:'interno',  rate:10, hpw:4, weeks:16, notes:'' },
+    ];
+    state.milestones = [
+      { id:uid(), name:'Prototipo jugable',    area:'produccion', status:'pendiente', date:'', notes:'Core loop funcionando' },
+      { id:uid(), name:'Alpha interna',        area:'produccion', status:'pendiente', date:'', notes:'' },
+      { id:uid(), name:'🚀 LAUNCH DAY',         area:'launch',     status:'pendiente', date:'', notes:'Hot Potato en Steam' },
+    ];
+    await save();
+    renderAll();
+  }
 }
+init();
 </script>
 </body>
 </html>
