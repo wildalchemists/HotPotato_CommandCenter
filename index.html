@@ -2394,16 +2394,20 @@ async function init() {
     }
   } catch(e){}
 
-  // Load users from Firebase
+  // Load users from Firebase with timeout
   try {
-    const snap = await getDocs(query(col('users'), orderBy('name')));
+    const timeout = new Promise((_,rej) => setTimeout(()=>rej(new Error('Timeout — comprueba las reglas de Firestore')), 8000));
+    const snap = await Promise.race([
+      getDocs(query(col('users'), orderBy('name'))),
+      timeout
+    ]);
     authUsers = snap.docs.map(d=>({id:d.id,...d.data()}));
   } catch(e) {
     document.getElementById('s-loading').innerHTML = `
       <div style="text-align:center;padding:20px">
         <div style="font-size:36px;margin-bottom:12px">⚠️</div>
         <div style="font-family:'Space Mono',monospace;font-size:10px;color:#D04030;margin-bottom:8px">ERROR DE CONEXIÓN</div>
-        <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(237,232,223,.4);max-width:340px">${e.message}</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(237,232,223,.4);max-width:340px;line-height:1.8">${e.message}<br><br>Ve a Firebase Console → Firestore → Reglas y asegúrate de que permite lectura/escritura.</div>
         <button onclick="location.reload()" style="margin-top:20px;font-family:'Space Mono',monospace;font-size:9px;padding:8px 20px;background:transparent;border:1px solid #C9A428;color:#C9A428;border-radius:8px;cursor:pointer">REINTENTAR</button>
       </div>`;
     return;
