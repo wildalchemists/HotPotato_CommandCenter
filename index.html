@@ -1381,14 +1381,23 @@ window.logout = function() {
 // ── APP LISTENERS (start after login) ────────────────────
 function startAppListeners() {
   load();
+  onSnapshot(query(col('contributions'), orderBy('date','desc')), snap => {
+    contributions = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderContributions();
+  });
+  onSnapshot(STATE_DOC, snap => {
+    if(snap.exists()) {
+      const data = snap.data();
+      state = { ...state, ...data };
+      renderAll();
+      syncConfig();
+    }
+  });
+}
+
 // ── CONTRIBUTIONS STATE ────────────────────────────────────
 let contributions = [];
-onSnapshot(query(col('contributions'), orderBy('date','desc')), snap => {
-  contributions = snap.docs.map(d=>({id:d.id,...d.data()}));
-  renderContributions();
-});
 
-// ── CONTRIBUTIONS CRUD ────────────────────────────────────
 window.openContrib  = () => { document.getElementById('contrib-form').style.display=''; };
 window.closeContrib = () => { document.getElementById('contrib-form').style.display='none'; };
 
@@ -1453,8 +1462,7 @@ function renderContributions() {
     </div>`;
 }
 
-// ── FIREBASE SAVE/LOAD ─────────────────────────────────────
-// Replaces localStorage save/load — state persists in Firestore project/main doc
+// ── FIREBASE SAVE/LOAD ────────────────────────────────────
 let _saving = false;
 async function save() {
   if(_saving) return;
@@ -1481,17 +1489,6 @@ async function load() {
   setInterval(updateClock, 1000);
   updateClock();
 }
-
-// Live listener — any change from any user updates everyone
-onSnapshot(STATE_DOC, snap => {
-  if(snap.exists()) {
-    const data = snap.data();
-    state = { ...state, ...data };
-    renderAll();
-    syncConfig();
-  }
-});
-} // end startAppListeners
 
 // ─── STATE ───
 let state = {
@@ -2350,23 +2347,6 @@ document.querySelectorAll('.modal-overlay').forEach(overlay=>{
     }
   });
 });
-
-// ─── INIT ───
-load();
-syncConfig();
-// Restore var inputs from saved state
-if (state.vars) {
-  const sv = state.vars;
-  const setV2 = (id,v) => { const el=document.getElementById(id); if(el&&v!==undefined) el.value=v; };
-  setV2('var-p1',    sv.P1);
-  setV2('var-p2',    sv.P2);
-  setV2('var-steam', sv.STEAM ? Math.round(sv.STEAM*100) : 30);
-  setV2('var-keys',  sv.keys);
-  setV2('var-units', sv.units);
-  setV2('var-mix',   sv.mix ? Math.round(sv.mix*100) : 40);
-  setV2('var-invest',sv.invest);
-  setV2('var-mkt',   sv.mkt);
-}
 
 // ── EXPOSE TO WINDOW ──────────────────────────────────────
 Object.assign(window, {
