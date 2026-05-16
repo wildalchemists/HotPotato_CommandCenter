@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🥔 Hot Potato · Auth</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: #1E1C18;
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── WHO SCREEN ── */
+.who-wrap {
+  text-align: center;
+  width: 100%;
+  padding: 40px 20px;
+}
+.who-logo {
+  font-family: 'Bangers', cursive;
+  font-size: 56px;
+  letter-spacing: 4px;
+  color: #F0D060;
+  animation: float 3s ease-in-out infinite;
+  display: block;
+}
+@keyframes float {
+  0%,100% { transform: translateY(0) rotate(-2deg); }
+  50%      { transform: translateY(-10px) rotate(2deg); }
+}
+.who-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: rgba(237,232,223,.3);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin: 6px 0 40px;
+}
+.who-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 500px;
+  margin: 0 auto;
+}
+.who-card {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 18px 12px;
+  cursor: pointer;
+  transition: all .2s;
+  text-align: center;
+}
+.who-card:hover {
+  background: rgba(201,164,40,.1);
+  border-color: rgba(201,164,40,.35);
+  transform: translateY(-2px);
+}
+.who-av {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: rgba(201,164,40,.15);
+  border: 1px solid rgba(201,164,40,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 20px; color: #F0D060;
+  margin: 0 auto 10px;
+}
+.who-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(237,232,223,.8);
+}
+.who-role {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  color: rgba(237,232,223,.3);
+  letter-spacing: 1px;
+  margin-top: 3px;
+}
+
+/* ── PIN SCREEN ── */
+.pin-wrap {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+}
+.pin-wrap.visible { display: flex; }
+.who-wrap.hidden  { display: none; }
+
+.pin-back {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: rgba(237,232,223,.3);
+  letter-spacing: 1px;
+  cursor: pointer;
+  margin-bottom: 28px;
+  transition: color .15s;
+  align-self: flex-start;
+  margin-left: calc(50% - 110px);
+}
+.pin-back:hover { color: #C9A428; }
+.pin-av {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: rgba(201,164,40,.15);
+  border: 2px solid rgba(201,164,40,.3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bangers', cursive;
+  font-size: 30px; color: #F0D060;
+  margin-bottom: 10px;
+}
+.pin-name {
+  font-family: 'Bangers', cursive;
+  font-size: 30px;
+  letter-spacing: 2px;
+  color: #F0D060;
+  margin-bottom: 4px;
+}
+.pin-hint {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: rgba(237,232,223,.25);
+  letter-spacing: 2px;
+  margin-bottom: 28px;
+}
+.pin-dots {
+  display: flex;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.pin-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(201,164,40,.3);
+  background: transparent;
+  transition: all .15s;
+}
+.pin-dot.filled {
+  background: #C9A428;
+  border-color: #C9A428;
+}
+.pin-pad {
+  display: grid;
+  grid-template-columns: repeat(3, 68px);
+  gap: 8px;
+}
+.pin-key {
+  height: 54px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 10px;
+  font-family: 'Bangers', cursive;
+  font-size: 24px;
+  color: rgba(237,232,223,.7);
+  cursor: pointer;
+  transition: all .15s;
+  display: flex; align-items: center; justify-content: center;
+  user-select: none;
+}
+.pin-key:hover {
+  background: rgba(201,164,40,.12);
+  border-color: rgba(201,164,40,.3);
+  color: #F0D060;
+}
+.pin-key:active { transform: scale(.93); }
+.pin-key.del { font-size: 18px; font-family: 'DM Sans', sans-serif; }
+.pin-key.go  { background: rgba(201,164,40,.12); border-color: rgba(201,164,40,.3); color: #C9A428; }
+.pin-err {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: #D04030;
+  min-height: 18px;
+  margin-top: 10px;
+  letter-spacing: .5px;
+}
+
+/* ── FIRST RUN ── */
+.firstrun-wrap {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 20px;
+}
+.firstrun-wrap.visible { display: flex; }
+.firstrun-card {
+  background: #252320;
+  border: 1px solid rgba(201,164,40,.2);
+  border-radius: 16px;
+  padding: 36px 40px;
+  width: 420px;
+  max-width: 95vw;
+  text-align: center;
+}
+.firstrun-title {
+  font-family: 'Bangers', cursive;
+  font-size: 28px;
+  letter-spacing: 3px;
+  color: #F0D060;
+  margin-bottom: 4px;
+}
+.firstrun-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  color: rgba(237,232,223,.3);
+  letter-spacing: 2px;
+  margin-bottom: 28px;
+}
+.fr-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(237,232,223,.35);
+  display: block;
+  margin-bottom: 6px;
+  text-align: left;
+}
+.fr-input {
+  width: 100%;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(201,164,40,.2);
+  color: #F0D060;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color .15s;
+  margin-bottom: 16px;
+}
+.fr-input:focus { border-color: #C9A428; }
+.fr-pin {
+  font-family: 'Bangers', cursive;
+  font-size: 28px;
+  letter-spacing: 8px;
+  text-align: center;
+}
+.fr-btn {
+  width: 100%;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 13px;
+  background: #C9A428;
+  border: none;
+  border-radius: 8px;
+  color: #1E1C18;
+  cursor: pointer;
+  font-weight: 700;
+  transition: opacity .15s;
+  margin-top: 4px;
+}
+.fr-btn:hover { opacity: .85; }
+.fr-msg {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  min-height: 16px;
+  margin-top: 10px;
+  letter-spacing: .5px;
+}
+
+/* ── LOADING ── */
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid rgba(201,164,40,.2);
+  border-top-color: #C9A428;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-txt {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: rgba(237,232,223,.3);
+  letter-spacing: 2px;
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div class="loading-wrap" id="s-loading">
+  <div class="spinner"></div>
+  <div class="loading-txt">CONECTANDO…</div>
+</div>
+
+<!-- FIRST RUN -->
+<div class="firstrun-wrap" id="s-firstrun">
+  <div class="firstrun-card">
+    <div style="font-size:48px;margin-bottom:14px">🥔</div>
+    <div class="firstrun-title">PRIMER ACCESO</div>
+    <div class="firstrun-sub">CREA EL ADMIN DEL PROYECTO</div>
+    <label class="fr-label">TU NOMBRE</label>
+    <input type="text" class="fr-input" id="fr-name" placeholder="Ej: Pilar"
+      onkeydown="if(event.key==='Enter')sel('fr-pin').focus()">
+    <label class="fr-label">PIN (4 DÍGITOS)</label>
+    <input type="password" class="fr-input fr-pin" id="fr-pin"
+      maxlength="4" inputmode="numeric" placeholder="••••"
+      onkeydown="if(event.key==='Enter')createAdmin()">
+    <button class="fr-btn" onclick="createAdmin()">CREAR ADMIN Y ENTRAR →</button>
+    <div class="fr-msg" id="fr-msg"></div>
+  </div>
+</div>
+
+<!-- WHO -->
+<div class="who-wrap" id="s-who">
+  <span class="who-logo">🥔</span>
+  <div class="who-sub">HOT POTATO · COMMAND CENTER</div>
+  <div class="who-grid" id="who-grid"></div>
+</div>
+
+<!-- PIN -->
+<div class="pin-wrap" id="s-pin">
+  <div class="pin-back" onclick="showWho()">← Volver</div>
+  <div class="pin-av" id="pin-av">?</div>
+  <div class="pin-name" id="pin-name">—</div>
+  <div class="pin-hint">INTRODUCE TU PIN</div>
+  <div class="pin-dots" id="pin-dots">
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+    <div class="pin-dot"></div><div class="pin-dot"></div>
+  </div>
+  <div class="pin-pad">
+    <div class="pin-key" onclick="k('1')">1</div>
+    <div class="pin-key" onclick="k('2')">2</div>
+    <div class="pin-key" onclick="k('3')">3</div>
+    <div class="pin-key" onclick="k('4')">4</div>
+    <div class="pin-key" onclick="k('5')">5</div>
+    <div class="pin-key" onclick="k('6')">6</div>
+    <div class="pin-key" onclick="k('7')">7</div>
+    <div class="pin-key" onclick="k('8')">8</div>
+    <div class="pin-key" onclick="k('9')">9</div>
+    <div class="pin-key del" onclick="kDel()">⌫</div>
+    <div class="pin-key" onclick="k('0')">0</div>
+    <div class="pin-key go" onclick="kEnter()">→</div>
+  </div>
+  <div class="pin-err" id="pin-err"></div>
+</div>
+
+<script type="module">
+import { initializeApp }                        from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, addDoc,
+         getDocs, onSnapshot, orderBy,
+         query, doc, updateDoc }               from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// ── CONFIG ────────────────────────────────────────────────
+const FB = {
+  apiKey:            "AIzaSyAFvf31Iv5aj98MjSs_uiVQ2sR9fWW7MjI",
+  authDomain:        "hot-potato-cc.firebaseapp.com",
+  projectId:         "hot-potato-cc",
+  storageBucket:     "hot-potato-cc.firebasestorage.app",
+  messagingSenderId: "1022137605356",
+  appId:             "1:1022137605356:web:b52d3ba53887caf15659c9"
+};
+const app = initializeApp(FB);
+const db  = getFirestore(app);
+const col = name => collection(db, name);
+
+// ── HELPERS ───────────────────────────────────────────────
+const sel     = id => document.getElementById(id);
+const hashPin = p  => { let h=0; for(const c of p) h=(Math.imul(31,h)+c.charCodeAt(0))|0; return Math.abs(h).toString(16); };
+
+// ── STATE ─────────────────────────────────────────────────
+let users  = [];
+let pinBuf = '';
+let target = null;
+
+// ── SCREENS ───────────────────────────────────────────────
+function show(id) {
+  sel('s-loading').style.display  = 'none';
+  sel('s-firstrun').className     = 'firstrun-wrap' + (id==='firstrun' ? ' visible' : '');
+  sel('s-who').className          = 'who-wrap'      + (id==='who'      ? ''         : ' hidden');
+  sel('s-pin').className          = 'pin-wrap'      + (id==='pin'      ? ' visible' : '');
+}
+
+// ── WHO GRID ──────────────────────────────────────────────
+function renderWho() {
+  const g = sel('who-grid');
+  g.innerHTML = users.map(u => `
+    <div class="who-card" onclick="startPin('${u.id}')">
+      <div class="who-av">${u.name[0].toUpperCase()}</div>
+      <div class="who-name">${u.name}</div>
+      <div class="who-role">${u.isAdmin ? 'ADMIN' : 'MIEMBRO'}</div>
+    </div>
+  `).join('');
+  show('who');
+}
+window.showWho = () => { pinBuf=''; target=null; dots(); renderWho(); };
+
+// ── PIN ───────────────────────────────────────────────────
+window.startPin = function(uid) {
+  target = users.find(u => u.id === uid);
+  if (!target) return;
+  pinBuf = '';
+  sel('pin-av').textContent   = target.name[0].toUpperCase();
+  sel('pin-name').textContent = target.name;
+  sel('pin-err').textContent  = '';
+  dots(); show('pin');
+};
+
+function dots() {
+  document.querySelectorAll('.pin-dot')
+    .forEach((d,i) => d.classList.toggle('filled', i < pinBuf.length));
+}
+
+window.k = function(n) {
+  if (pinBuf.length >= 4) return;
+  pinBuf += n; dots();
+  if (pinBuf.length === 4) setTimeout(kEnter, 120);
+};
+window.kDel = function() {
+  pinBuf = pinBuf.slice(0, -1);
+  dots();
+  sel('pin-err').textContent = '';
+};
+window.kEnter = function() {
+  if (!target || pinBuf.length < 4) return;
+  if (hashPin(pinBuf) === target.pin) {
+    onSuccess(target);
+  } else {
+    sel('pin-err').textContent = 'PIN incorrecto';
+    pinBuf = ''; dots();
+  }
+};
+
+// ── SUCCESS → redirige a la app ───────────────────────────
+function onSuccess(user) {
+  // Guarda sesión
+  sessionStorage.setItem('hp_user', JSON.stringify({
+    id:      user.id,
+    name:    user.name,
+    isAdmin: user.isAdmin
+  }));
+  // Redirige — ajusta según tu estructura
+  window.location.href = 'prod.html';
+}
+
+// ── FIRST RUN ────────────────────────────────────────────
+window.createAdmin = async function() {
+  const name = sel('fr-name').value.trim();
+  const pin  = sel('fr-pin').value.trim();
+  const msg  = sel('fr-msg');
+
+  if (!name) { msg.style.color='#D04030'; msg.textContent='Introduce tu nombre'; return; }
+  if (!/^\d{4}$/.test(pin)) { msg.style.color='#D04030'; msg.textContent='El PIN debe ser 4 dígitos numéricos'; return; }
+
+  msg.style.color = 'rgba(237,232,223,.4)';
+  msg.textContent = 'Guardando en Firebase…';
+
+  // Timeout de 8 segundos
+  const timeout = new Promise((_, reject) =>
+    setTimeout(() => reject(new Error('Timeout — revisa las reglas de Firestore (modo prueba)')), 8000)
+  );
+
+  try {
+    const write = addDoc(col('users'), {
+      name,
+      pin:       hashPin(pin),
+      isAdmin:   true,
+      createdAt: new Date().toISOString()
+    });
+
+    const ref = await Promise.race([write, timeout]);
+    msg.style.color = '#3CA050';
+    msg.textContent = '✓ Admin creado. Entrando…';
+    setTimeout(() => onSuccess({ id: ref.id, name, isAdmin: true }), 800);
+  } catch(e) {
+    msg.style.color = '#D04030';
+    msg.textContent = e.message;
+    console.error('Firebase error:', e);
+  }
+};
+
+// ── INIT ─────────────────────────────────────────────────
+async function init() {
+  // ¿Hay sesión activa?
+  try {
+    const stored = sessionStorage.getItem('hp_user');
+    if (stored) {
+      const u = JSON.parse(stored);
+      if (u?.id) { window.location.href = 'index.html'; return; }
+    }
+  } catch(e) {}
+
+  // Carga usuarios de Firebase
+  try {
+    const snap = await getDocs(query(col('users'), orderBy('name')));
+    users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  } catch(e) {
+    sel('s-loading').innerHTML = `
+      <div style="text-align:center">
+        <div style="font-size:36px;margin-bottom:12px">⚠️</div>
+        <div style="font-family:'Space Mono',monospace;font-size:10px;color:#D04030;letter-spacing:1px;margin-bottom:8px">ERROR DE CONEXIÓN</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(237,232,223,.4);max-width:340px;line-height:1.8">${e.message}</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(237,232,223,.3);margin-top:8px">Comprueba que Firestore está en <strong style="color:rgba(237,232,223,.6)">Modo prueba</strong></div>
+        <button onclick="location.reload()" style="margin-top:20px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px;padding:8px 20px;background:transparent;border:1px solid #C9A428;color:#C9A428;border-radius:8px;cursor:pointer">REINTENTAR</button>
+      </div>`;
+    return;
+  }
+
+  // Sin usuarios → primer arranque
+  if (users.length === 0) {
+    show('firstrun');
+    return;
+  }
+
+  // Live updates para que aparezcan nuevos miembros sin recargar
+  onSnapshot(query(col('users'), orderBy('name')), snap => {
+    users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderWho();
+  });
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🥔 Hot Potato · Producción</title>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --cream:#EAE5DB; --dark:#1E1C18; --dark2:#1A1816; --dark3:#252320;
+  --gold:#C9A428;  --gold-l:#F0D060; --card:#F7F3EC; --muted:#6B6560;
+  --border:rgba(0,0,0,0.12); --text:#1F1C17;
+  --bg:#EAE5DB; --bg2:#F7F3EC; --bg3:#EFE9E0; --bg4:#E5DFD5;
+  --green:#3CA050; --green2:#EAF3DE;
+  --red:#D04030;   --red2:#FCEAEA;
+  --blue:#2E6FCC;  --blue2:#E5EEF9;
+  --purple:#7B4FBB;--purple2:#F0EAF9;
+  --teal:#2A9D8F;  --teal2:#E5F4F2;
+  --orange:#E07030;
+  --amber:var(--gold);
+  --text2:var(--muted); --text3:rgba(0,0,0,0.3);
+}
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { scroll-behavior:smooth; }
+body { background:var(--cream); color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; line-height:1.5; min-height:100vh; }
+::-webkit-scrollbar { width:4px; } ::-webkit-scrollbar-thumb { background:var(--gold); border-radius:2px; }
+
+/* ── HEADER ── */
+.header { display:flex; align-items:center; justify-content:space-between; padding:10px 24px; background:var(--dark); border-bottom:2px solid var(--gold); position:sticky; top:0; z-index:100; }
+.h-title { font-family:'Bangers',cursive; font-size:26px; letter-spacing:3px; color:#F0EBE0; line-height:1; }
+.h-title span { color:var(--gold); }
+.h-sub { font-family:'Space Mono',monospace; font-size:9px; color:rgba(237,232,223,0.4); letter-spacing:2px; margin-top:2px; text-transform:uppercase; }
+.h-right { display:flex; align-items:center; gap:14px; }
+.h-user { font-family:'Space Mono',monospace; font-size:10px; color:var(--gold); letter-spacing:1px; background:rgba(201,164,40,0.1); border:1px solid rgba(201,164,40,0.2); padding:4px 12px; border-radius:8px; }
+.live-dot { width:6px; height:6px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+@keyframes pulse { 0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(60,160,80,.4);}50%{opacity:.7;box-shadow:0 0 0 4px rgba(60,160,80,0);} }
+.h-clock { font-family:'Space Mono',monospace; font-size:12px; color:rgba(237,232,223,0.35); letter-spacing:2px; }
+
+/* ── CONTENT ── */
+.content { padding:20px 24px 48px; max-width:1440px; margin:0 auto; }
+
+/* ── PANELS ── */
+.panel { background:var(--bg2); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:14px; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+.panel-header { display:flex; align-items:center; justify-content:space-between; padding:8px 14px; background:var(--dark); border-bottom:1px solid rgba(255,255,255,.06); }
+.ph-left { display:flex; align-items:center; gap:8px; }
+.panel-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); flex-shrink:0; }
+.panel-body { padding:16px; }
+
+/* ── GRID ── */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.panel-title { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:rgba(237,232,223,0.5); }
+
+/* ── BUTTONS ── */
+.btn { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; padding:6px 14px; border-radius:8px; cursor:pointer; border:1px solid; transition:all .15s; white-space:nowrap; display:inline-flex; align-items:center; gap:5px; }
+.btn-amber { background:var(--dark); border-color:var(--gold); color:var(--gold); }
+.btn-amber:hover { background:var(--gold); color:var(--dark); }
+.btn-ghost { background:transparent; border-color:var(--border); color:var(--muted); }
+.btn-ghost:hover { border-color:var(--dark); color:var(--dark); }
+.btn-red { background:var(--red2); border-color:rgba(208,64,48,.3); color:var(--red); }
+.btn-red:hover { background:rgba(208,64,48,.15); }
+.btn-sm { font-size:8px; padding:3px 9px; }
+
+/* ── TABLES ── */
+.data-table { width:100%; border-collapse:collapse; }
+.data-table th { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--border); padding:7px 10px; text-align:left; white-space:nowrap; background:#F2EDE4; }
+.data-table th.r { text-align:right; }
+.data-table td { padding:8px 10px; border-bottom:1px solid rgba(0,0,0,.06); font-size:12px; color:var(--muted); vertical-align:middle; }
+.data-table td.r { text-align:right; }
+.data-table tr:last-child td { border-bottom:none; }
+.data-table tr:hover td { background:rgba(201,164,40,.04); }
+.data-table .total-row td { background:#F2EDE4; color:var(--dark); font-weight:700; border-top:1px solid var(--border); font-family:'Space Mono',monospace; font-size:10px; }
+
+/* ── TAGS ── */
+.tag { display:inline-block; font-family:'Space Mono',monospace; font-size:8px; padding:2px 8px; border-radius:99px; letter-spacing:1px; font-weight:700; white-space:nowrap; }
+.tg-g  { background:var(--green2); color:var(--green);  border:1px solid rgba(60,160,80,.2); }
+.tg-r  { background:var(--red2);   color:var(--red);    border:1px solid rgba(208,64,48,.2); }
+.tg-a  { background:rgba(201,164,40,.12); color:#8B6A00; border:1px solid rgba(201,164,40,.3); }
+.tg-b  { background:var(--blue2);  color:var(--blue);   border:1px solid rgba(46,111,204,.2); }
+.tg-p  { background:var(--purple2);color:var(--purple); border:1px solid rgba(123,79,187,.2); }
+.tg-x  { background:rgba(0,0,0,.05); color:var(--muted); border:1px solid var(--border); }
+
+/* ── PROGRESS ── */
+.prog-track { height:6px; background:rgba(0,0,0,.08); border-radius:3px; overflow:hidden; }
+.prog-fill  { height:100%; border-radius:3px; transition:width .3s ease; }
+
+/* ── SPRINT BOARD ── */
+.sprint-cols { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; }
+.sprint-col { background:rgba(0,0,0,.03); border-radius:10px; border:1px solid rgba(0,0,0,.06); }
+.sprint-col-header { padding:8px 12px; font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; border-bottom:1px solid rgba(0,0,0,.06); display:flex; align-items:center; justify-content:space-between; color:var(--muted); }
+.sprint-col-body { padding:8px; min-height:80px; }
+.task-card { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:8px 10px; margin-bottom:6px; cursor:pointer; transition:all .15s; box-shadow:0 1px 3px rgba(0,0,0,.06); }
+.task-card:hover { border-color:var(--gold); box-shadow:0 2px 8px rgba(201,164,40,.15); transform:translateY(-1px); }
+.task-card.mine { border-left:3px solid var(--gold); }
+.task-card-name { font-size:11px; color:var(--dark); margin-bottom:5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-weight:500; }
+.task-card-meta { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+
+/* ── MODAL ── */
+.modal-overlay { position:fixed; inset:0; background:rgba(30,28,24,.75); display:none; align-items:center; justify-content:center; z-index:999; backdrop-filter:blur(3px); }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--card); border:1px solid var(--border); border-radius:16px; width:480px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,.25); }
+.modal-header { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; background:var(--dark); position:sticky; top:0; border-radius:16px 16px 0 0; }
+.modal-title { font-family:'Bangers',cursive; font-size:22px; letter-spacing:2px; color:var(--gold); }
+.modal-close { font-size:18px; color:rgba(237,232,223,.4); cursor:pointer; }
+.modal-close:hover { color:#F0EBE0; }
+.modal-body { padding:20px; }
+.form-row { margin-bottom:14px; }
+.form-label { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:1.5px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; display:block; }
+.form-input { width:100%; background:#F7F3EC; border:1px solid var(--border); color:var(--dark); font-family:'DM Sans',sans-serif; font-size:13px; padding:8px 12px; border-radius:8px; outline:none; transition:border-color .15s; }
+.form-input:focus { border-color:var(--gold); box-shadow:0 0 0 3px rgba(201,164,40,.12); }
+select.form-input { cursor:pointer; }
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.modal-footer { padding:14px 20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:8px; background:#F2EDE4; border-radius:0 0 16px 16px; }
+
+/* ── UTIL ── */
+.c-amber  { color:var(--gold)!important; }
+.c-green  { color:var(--green)!important; }
+.c-red    { color:var(--red)!important; }
+.c-blue   { color:var(--blue)!important; }
+.c-purple { color:var(--purple)!important; }
+.flex-row { display:flex; align-items:center; gap:8px; }
+.gap4 { gap:4px; }
+.tbadge { font-size:8px; background:rgba(255,255,255,.08); color:rgba(237,232,223,.3); padding:1px 5px; border-radius:99px; }
+
+/* ── TOAST ── */
+#toast { position:fixed; bottom:24px; right:24px; z-index:9999; background:var(--dark); border:1px solid var(--gold); color:var(--gold); font-family:'Space Mono',monospace; font-size:10px; letter-spacing:1px; padding:10px 18px; border-radius:8px; opacity:0; transition:opacity .2s; pointer-events:none; }
+#toast.show { opacity:1; }
+#toast.err  { border-color:var(--red); color:var(--red); }
+
+/* ── TASK BADGES ── */
+.badge-prev   { display:inline-block;font-family:'Space Mono',monospace;font-size:7px;padding:2px 6px;border-radius:4px;background:rgba(184,120,32,.15);color:var(--amber);border:1px solid rgba(184,120,32,.3);letter-spacing:.5px;white-space:nowrap; }
+.badge-urgent { display:inline-block;font-family:'Space Mono',monospace;font-size:7px;padding:2px 6px;border-radius:4px;background:rgba(208,64,48,.15);color:var(--red);border:1px solid rgba(208,64,48,.3);letter-spacing:.5px;white-space:nowrap; }
+
+/* ── MILESTONE ── */
+.ms-item { display:flex;align-items:flex-start;gap:14px;padding:12px 0;border-bottom:1px solid var(--border); }
+.ms-item:last-child { border-bottom:none; }
+.ms-dot { width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px; }
+.ms-body { flex:1;min-width:0; }
+.ms-name { font-size:13px;font-weight:600;color:var(--dark);margin-bottom:3px; }
+.ms-meta { font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-bottom:6px; }
+.ms-prog-row { display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:3px; }
+.ms-right { text-align:right;flex-shrink:0; }
+.ms-date-val { font-family:'Bangers',cursive;font-size:18px;letter-spacing:1px; }
+.ms-days { font-family:'Space Mono',monospace;font-size:8px;color:var(--muted); }
+.prod-tab { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:2px; text-transform:uppercase; color:rgba(237,232,223,.3); padding:10px 18px; cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; white-space:nowrap; }
+.prod-tab:hover { color:rgba(237,232,223,.6); }
+.prod-tab.active { color:var(--gold); border-bottom-color:var(--gold); }
+
+/* ── DIVIDER ── */
+.section-divider { display:flex; align-items:center; gap:12px; margin:24px 0 18px; }
+.sd-line { flex:1; height:1px; background:var(--border); }
+.sd-label { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); white-space:nowrap; }
+
+/* ── METRICS STRIP ── */
+.metrics-strip { display:grid; gap:1px; background:var(--border); border-radius:12px; overflow:hidden; margin-bottom:14px; }
+.metric-card { background:var(--card); padding:16px 18px; }
+.mc-label { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:6px; }
+.mc-val { font-family:'Bangers',cursive; font-size:32px; letter-spacing:1px; line-height:1; margin-bottom:3px; }
+.mc-sub { font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); }
+.mc-bar { margin-top:8px; }
+
+/* ── MY HOURS WIDGET ── */
+.my-hours-card { background:var(--dark); border-radius:12px; padding:20px 22px; border:1px solid rgba(201,164,40,.15); margin-bottom:14px; }
+.mhc-eyebrow { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(237,232,223,.3); margin-bottom:10px; }
+.mhc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+.mhc-box { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:12px; }
+.mhc-box-lbl { font-family:'Space Mono',monospace; font-size:7px; letter-spacing:1.5px; text-transform:uppercase; color:rgba(237,232,223,.3); margin-bottom:6px; }
+.mhc-box-val { font-family:'Bangers',cursive; font-size:32px; letter-spacing:1px; line-height:1; color:var(--gold-l); }
+.mhc-box-val.green { color:#3CA050 !important; }
+.mhc-box-val.red   { color:#D04030 !important; }
+.mhc-inp { width:100%; background:transparent; border:none; border-bottom:1px solid rgba(201,164,40,.3); color:var(--gold-l); font-family:'Bangers',cursive; font-size:32px; letter-spacing:1px; outline:none; padding:2px 0; -moz-appearance:textfield; }
+.mhc-inp::-webkit-inner-spin-button { -webkit-appearance:none; }
+.mhc-inp:focus { border-bottom-color:var(--gold); }
+.mhc-inp::placeholder { color:rgba(237,232,223,.15); }
+.mhc-box-sub { font-family:'Space Mono',monospace; font-size:8px; color:rgba(237,232,223,.25); margin-top:4px; }
+.mhc-earn { display:flex; align-items:center; justify-content:space-between; background:rgba(201,164,40,.08); border:1px solid rgba(201,164,40,.15); border-radius:8px; padding:10px 14px; }
+.mhc-earn-lbl { font-family:'Space Mono',monospace; font-size:8px; color:rgba(237,232,223,.35); letter-spacing:1px; }
+.mhc-earn-val { font-family:'Bangers',cursive; font-size:24px; letter-spacing:1px; color:var(--gold-l); }
+.mhc-validated { margin-top:8px; background:rgba(60,160,80,.1); border:1px solid rgba(60,160,80,.2); border-radius:8px; padding:10px 14px; font-family:'Space Mono',monospace; font-size:9px; color:rgba(60,160,80,.9); line-height:1.7; }
+.mhc-save-btn { margin-top:10px; width:100%; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; padding:9px; background:var(--gold); border:none; border-radius:8px; color:var(--dark); cursor:pointer; font-weight:700; transition:opacity .15s; }
+.mhc-save-btn:hover { opacity:.85; }
+.mhc-save-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+/* ── ANON TEAM HOURS ── */
+.anon-note { font-family:'Space Mono',monospace; font-size:9px; color:var(--muted); background:rgba(42,157,143,.07); border:1px solid rgba(42,157,143,.15); border-radius:8px; padding:8px 12px; margin-bottom:12px; }
+
+/* ── POPUP ── */
+.popup-overlay { position:fixed; inset:0; background:rgba(30,28,24,.8); display:flex; align-items:center; justify-content:center; z-index:9999; backdrop-filter:blur(4px); }
+.popup-overlay.hidden { display:none; }
+.popup-card { background:var(--dark); border:1px solid rgba(201,164,40,.2); border-radius:16px; width:500px; max-width:95vw; max-height:90vh; overflow-y:auto; box-shadow:0 32px 80px rgba(0,0,0,.5); }
+.popup-hdr { padding:20px 24px 0; }
+.popup-title { font-family:'Bangers',cursive; font-size:28px; letter-spacing:2px; color:var(--gold-l); margin-bottom:4px; }
+.popup-sub { font-family:'Space Mono',monospace; font-size:9px; color:rgba(237,232,223,.3); letter-spacing:2px; margin-bottom:20px; }
+.popup-body { padding:0 24px 24px; }
+.popup-section { margin-bottom:18px; }
+.popup-section-title { font-family:'Space Mono',monospace; font-size:8px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+.popup-text { font-size:12px; color:rgba(237,232,223,.6); line-height:1.9; }
+.popup-text strong { color:rgba(237,232,223,.9); }
+.popup-item { display:flex; gap:12px; margin-bottom:8px; align-items:flex-start; }
+.popup-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
+.popup-item-txt { font-size:12px; color:rgba(237,232,223,.6); line-height:1.7; }
+.popup-item-txt strong { color:rgba(237,232,223,.85); }
+.popup-foot { padding:16px 24px; border-top:1px solid rgba(255,255,255,.06); display:flex; justify-content:space-between; align-items:center; }
+.popup-dont-show { font-family:'Space Mono',monospace; font-size:9px; color:rgba(237,232,223,.25); cursor:pointer; letter-spacing:.5px; }
+.popup-dont-show:hover { color:rgba(237,232,223,.5); }
+.popup-close-btn { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:1.5px; text-transform:uppercase; padding:9px 20px; background:var(--gold); border:none; border-radius:8px; color:var(--dark); cursor:pointer; font-weight:700; transition:opacity .15s; }
+.popup-close-btn:hover { opacity:.85; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="h-title">🥔 HOT POTATO <span>· PRODUCCIÓN</span></div>
+    <div class="h-sub">ROLES · TAREAS · SPRINT BOARD · HORAS</div>
+  </div>
+  <div class="h-right">
+    <div class="h-user" id="h-user">—</div>
+    <button class="btn btn-ghost btn-sm" onclick="openModal('perfil')">⚙ MI PERFIL</button>
+    <button class="btn btn-ghost btn-sm" id="btn-admin" style="display:none" onclick="openModal('admin')">ADMIN</button>
+    <div class="flex-row gap4">
+      <div class="live-dot"></div>
+      <div class="h-clock" id="h-clock">--:--:--</div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="logout()">SALIR</button>
+  </div>
+</div>
+
+<!-- TABS NAV -->
+<div style="background:var(--dark2);border-bottom:1px solid rgba(255,255,255,.06);padding:0 24px;display:flex;position:sticky;top:52px;z-index:99">
+  <div class="prod-tab active" id="tab-equipo" onclick="switchTab('equipo')">👥 EQUIPO</div>
+  <div class="prod-tab" id="tab-misprint" onclick="switchTab('misprint')">🏃 MI SPRINT</div>
+</div>
+
+<!-- ══ TAB: EQUIPO ══ -->
+<div id="pane-equipo" class="content">
+
+  <!-- ROLES -->
+  <div class="g2">
+    <div class="panel">
+      <div class="panel-header">
+        <div class="ph-left"><div class="panel-dot"></div><span class="panel-title">EQUIPO · ROLES</span></div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="data-table">
+          <thead><tr><th>MIEMBRO</th><th>ROL</th><th>DEPARTAMENTO</th><th class="r">€/H</th></tr></thead>
+          <tbody id="roles-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><div class="ph-left"><div class="panel-dot" style="background:var(--blue)"></div><span class="panel-title">HORAS POR ÁREA</span></div></div>
+      <div class="panel-body" id="area-hours-panel"></div>
+    </div>
+  </div>
+
+  <!-- KANBAN -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="ph-left"><div class="panel-dot" style="background:var(--purple)"></div><span class="panel-title">KANBAN · SPRINT ACTIVO <span class="tbadge" id="badge-tasks">0</span></span></div>
+      <div class="flex-row gap4">
+        <select id="filter-sprint" class="form-input" style="width:auto;font-size:9px;padding:3px 8px" onchange="renderSprintBoard()">
+          <option value="">Sprint activo</option>
+        </select>
+        <button class="btn btn-amber btn-sm" id="btn-add-task" style="display:none" onclick="openModal('task')">+ TAREA</button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <div class="sprint-cols">
+        <div class="sprint-col">
+          <div class="sprint-col-header"><span>📋 BACKLOG</span><span class="tbadge" id="sc-backlog-n">0</span></div>
+          <div class="sprint-col-body" id="sc-backlog"></div>
+        </div>
+        <div class="sprint-col">
+          <div class="sprint-col-header"><span>🔧 EN PROGRESO</span><span class="tbadge" id="sc-wip-n">0</span></div>
+          <div class="sprint-col-body" id="sc-wip"></div>
+        </div>
+        <div class="sprint-col">
+          <div class="sprint-col-header"><span>👀 REVIEW</span><span class="tbadge" id="sc-review-n">0</span></div>
+          <div class="sprint-col-body" id="sc-review"></div>
+        </div>
+        <div class="sprint-col">
+          <div class="sprint-col-header"><span>✅ DONE</span><span class="tbadge" id="sc-done-n">0</span></div>
+          <div class="sprint-col-body" id="sc-done"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MILESTONES PANEL -->
+  <div class="panel" id="milestones-panel">
+    <div class="panel-header">
+      <div class="ph-left"><div class="panel-dot" style="background:var(--orange)"></div><span class="panel-title">🎯 MILESTONES</span></div>
+    </div>
+    <div class="panel-body" id="milestones-overview"></div>
+  </div>
+
+  <!-- BACKLOG TABLE (admin) -->
+  <div class="panel" id="backlog-table-panel">
+    <div class="panel-header">
+      <div class="ph-left"><div class="panel-dot" style="background:var(--green)"></div><span class="panel-title">BACKLOG COMPLETO</span></div>
+      <div class="flex-row gap4">
+        <select id="filter-area" class="form-input" style="width:auto;font-size:9px;padding:3px 8px" onchange="renderTasks()">
+          <option value="">Todas las áreas</option>
+          <option value="produccion">Producción</option><option value="arte">Arte</option>
+          <option value="audio">Audio</option><option value="marketing">Marketing</option>
+          <option value="business">Business</option><option value="qa">QA</option><option value="otro">Otro</option>
+        </select>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead><tr>
+          <th>TAREA</th><th>ÁREA</th><th>ASIGNADA A</th><th>SPRINT</th><th>STATUS</th>
+          <th class="r">H. EST.</th><th class="r">H. REAL</th><th></th>
+        </tr></thead>
+        <tbody id="tasks-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ TAB: MI SPRINT ══ -->
+<div id="pane-misprint" class="content" style="display:none">
+
+  <!-- SPRINT KPIs -->
+  <div class="metrics-strip" id="sprint-metrics" style="grid-template-columns:repeat(5,1fr);margin-bottom:14px"></div>
+
+  <div class="g2" style="margin-bottom:14px">
+
+    <!-- MIS HORAS + TOTAL -->
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="my-hours-card" id="my-hours-section"></div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="ph-left"><div class="panel-dot" style="background:var(--teal)"></div><span class="panel-title">MIS HORAS TOTALES · TODOS LOS SPRINTS</span></div>
+        </div>
+        <div class="panel-body" id="my-total-section"></div>
+      </div>
+    </div>
+
+    <!-- EQUIPO ANÓNIMO -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="ph-left"><div class="panel-dot" style="background:var(--blue)"></div><span class="panel-title">EQUIPO · HORAS ANÓNIMAS</span></div>
+      </div>
+      <div class="panel-body">
+        <div class="anon-note">🔒 Datos anónimos. Solo tú ves las tuyas en detalle.</div>
+        <div id="team-hours-section"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MIS TAREAS -->
+  <div class="panel">
+    <div class="panel-header">
+      <div class="ph-left"><div class="panel-dot" style="background:var(--green)"></div><span class="panel-title">MIS TAREAS · SPRINT ACTUAL</span></div>
+      <span id="my-tasks-pct" style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(237,232,223,.4)">—</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead><tr>
+          <th>TAREA</th><th>ÁREA</th><th>STATUS</th><th class="r">H. EST.</th><th class="r">H. REAL</th><th></th>
+        </tr></thead>
+        <tbody id="my-tasks-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<!-- ═══ POPUP ═══ -->
+<div class="popup-overlay hidden" id="vibe-popup">
+  <div class="popup-card">
+    <div class="popup-hdr">
+      <div class="popup-title">🥔 CÓMO TRABAJAMOS</div>
+      <div class="popup-sub">HOT POTATO · PRODUCTION PHILOSOPHY</div>
+    </div>
+    <div class="popup-body">
+      <div class="popup-section">
+        <div class="popup-section-title">LA IDEA BASE</div>
+        <p class="popup-text">Este no es un tracker de horas al uso. Aquí valoramos <strong>lo que se consigue</strong>, no el tiempo que tardas. Si terminas tu sprint antes → bien hecho, cobras igual.</p>
+      </div>
+      <div class="popup-section">
+        <div class="popup-section-title">CÓMO FUNCIONA TU SPRINT</div>
+        <div class="popup-item"><span class="popup-icon">📋</span><div class="popup-item-txt">Cada semana acordamos en reunión las tareas que te toca y las <strong>horas que calculas tardar</strong>. El mínimo base son <strong>4h semanales</strong>.</div></div>
+        <div class="popup-item"><span class="popup-icon">✅</span><div class="popup-item-txt">Si completas todas tus tareas → tus horas pactadas se <strong>convalidan enteras</strong>, aunque hayas tardado menos. La eficiencia se premia.</div></div>
+        <div class="popup-item"><span class="popup-icon">⏱</span><div class="popup-item-txt">Si no las completas → se registran las <strong>horas reales trabajadas</strong>. Sin culpa, sin drama. Hay semanas mejores y peores.</div></div>
+        <div class="popup-item"><span class="popup-icon">⭐</span><div class="popup-item-txt">¿Terminaste antes? Puedes <strong>pillar bonus tasks</strong> del backlog. Esas horas se suman sin convalidación — lo que tardas, lo que cuentas.</div></div>
+      </div>
+      <div class="popup-section">
+        <div class="popup-section-title">LO QUE NO QUEREMOS</div>
+        <div class="popup-item"><span class="popup-icon">🚫</span><div class="popup-item-txt"><strong>Competitividad</strong> — las horas anónimas del equipo existen para contexto, no para compararte.</div></div>
+        <div class="popup-item"><span class="popup-icon">🚫</span><div class="popup-item-txt"><strong>Saturación</strong> — si una semana tienes menos disponibilidad, dilo en la reunión. Se ajusta.</div></div>
+        <div class="popup-item"><span class="popup-icon">🚫</span><div class="popup-item-txt"><strong>Lentitud artificial</strong> — no alargas una tarea para "parecer ocupado". Termina, cobra, y si quieres más, pilla bonus.</div></div>
+      </div>
+      <div class="popup-section">
+        <div class="popup-section-title">EL DINERO</div>
+        <p class="popup-text"><strong>10€/hora</strong> para todo el equipo. Las horas convalidadas al final del sprint se suman a tu total. El admin ve el coste del proyecto en el log.</p>
+      </div>
+    </div>
+    <div class="popup-foot">
+      <span class="popup-dont-show" onclick="closePopup(true)">No mostrar de nuevo</span>
+      <button class="popup-close-btn" onclick="closePopup(false)">ENTENDIDO →</button>
+    </div>
+  </div>
+</div>
+
+<!-- PERFIL MODAL -->
+<div class="modal-overlay" id="modal-perfil">
+  <div class="modal" style="width:520px">
+    <div class="modal-header">
+      <div class="modal-title">⚙ MI PERFIL</div>
+      <span class="modal-close" onclick="closeModal('perfil')">✕</span>
+    </div>
+    <div class="modal-body">
+
+      <!-- CAMBIAR PIN -->
+      <div style="margin-bottom:20px;padding-bottom:20px;border-bottom:1px solid var(--border)">
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">CAMBIAR PIN</div>
+        <div class="form-grid">
+          <div class="form-row"><label class="form-label">PIN ACTUAL</label><input type="password" class="form-input" id="pin-current" maxlength="4" inputmode="numeric" placeholder="••••"></div>
+          <div class="form-row"><label class="form-label">PIN NUEVO</label><input type="password" class="form-input" id="pin-new" maxlength="4" inputmode="numeric" placeholder="••••"></div>
+        </div>
+        <button class="btn btn-amber btn-sm" onclick="changePin()">CAMBIAR PIN</button>
+        <div id="pin-msg" style="font-family:'Space Mono',monospace;font-size:9px;margin-top:8px;min-height:14px"></div>
+      </div>
+
+      <!-- MIS ROLES -->
+      <div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:12px">MIS ROLES</div>
+        <div id="my-roles-list" style="margin-bottom:12px"></div>
+        <!-- Añadir rol -->
+        <div style="background:var(--bg3);border-radius:10px;padding:12px;border:1px solid var(--border)">
+          <div style="font-family:'Space Mono',monospace;font-size:8px;letter-spacing:1.5px;color:var(--muted);margin-bottom:10px">AÑADIR ROL</div>
+          <div class="form-grid">
+            <div class="form-row"><label class="form-label">NOMBRE DEL ROL *</label><input type="text" class="form-input" id="new-role-name" placeholder="Ej: Game Designer"></div>
+            <div class="form-row"><label class="form-label">DEPARTAMENTO</label>
+              <select class="form-input" id="new-role-dept">
+                <option value="produccion">Producción</option>
+                <option value="arte">Arte</option>
+                <option value="audio">Audio</option>
+                <option value="diseno">Diseño</option>
+                <option value="qa">QA</option>
+                <option value="marketing">Marketing</option>
+                <option value="business">Business</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn btn-amber btn-sm" onclick="addMyRole()">+ AÑADIR ROL</button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('perfil')">CERRAR</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div class="modal-overlay" id="modal-admin">
+  <div class="modal" style="width:600px">
+    <div class="modal-header">
+      <div class="modal-title">⚙ ADMIN</div>
+      <span class="modal-close" onclick="closeModal('admin')">✕</span>
+    </div>
+    <div class="modal-body">
+
+      <!-- ADMIN TABS -->
+      <div style="display:flex;border-bottom:1px solid var(--border);margin-bottom:16px">
+        <div class="prod-tab active" id="atab-users"      onclick="adminTab('users')"     >👥 EQUIPO</div>
+        <div class="prod-tab"        id="atab-sprints"    onclick="adminTab('sprints')"   >🏃 SPRINTS</div>
+        <div class="prod-tab"        id="atab-milestones" onclick="adminTab('milestones')">🎯 MILESTONES</div>
+      </div>
+
+      <!-- EQUIPO PANEL -->
+      <div id="apane-users">
+        <div style="background:var(--bg3);border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid var(--border)">
+          <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">AÑADIR MIEMBRO</div>
+          <div class="form-grid">
+            <div class="form-row"><label class="form-label">NOMBRE *</label><input type="text" class="form-input" id="au-name" placeholder="Ej: Marco"></div>
+            <div class="form-row"><label class="form-label">PIN (4 dígitos)</label><input type="text" class="form-input" id="au-pin" maxlength="4" inputmode="numeric" placeholder="0000"></div>
+          </div>
+          <div class="form-row"><label class="form-label">ROL EN EL PROYECTO</label>
+            <select class="form-input" id="au-role"><option value="member">Miembro</option><option value="admin">Admin</option></select>
+          </div>
+          <button class="btn btn-amber" onclick="addUser()" style="width:100%;justify-content:center;margin-top:4px">✓ AÑADIR AL EQUIPO</button>
+          <div id="au-msg" style="font-family:'Space Mono',monospace;font-size:9px;margin-top:8px;min-height:14px;text-align:center"></div>
+        </div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">EQUIPO ACTUAL</div>
+        <div id="admin-users-list"></div>
+      </div>
+
+      <!-- SPRINTS PANEL -->
+      <div id="apane-sprints" style="display:none">
+        <!-- Crear sprint -->
+        <div style="background:var(--bg3);border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid var(--border)">
+          <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px" id="sprint-form-title">NUEVO SPRINT</div>
+          <input type="hidden" id="sp-edit-id">
+          <div class="form-row"><label class="form-label">NOMBRE *</label><input type="text" class="form-input" id="sp-name" placeholder="Sprint 1 — Core Loop"></div>
+          <div class="form-grid">
+            <div class="form-row"><label class="form-label">INICIO</label><input type="date" class="form-input" id="sp-start"></div>
+            <div class="form-row"><label class="form-label">FIN</label><input type="date" class="form-input" id="sp-end"></div>
+          </div>
+          <div class="form-row"><label class="form-label">OBJETIVO</label><input type="text" class="form-input" id="sp-goal" placeholder="¿Qué tiene que estar listo al final?"></div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-amber" onclick="saveSprint()" style="flex:1;justify-content:center">✓ GUARDAR SPRINT</button>
+            <button class="btn btn-ghost btn-sm" id="sp-cancel-edit" style="display:none" onclick="cancelSprintEdit()">CANCELAR</button>
+          </div>
+        </div>
+        <!-- Lista sprints -->
+        <div id="sprints-list"></div>
+      </div>
+
+      <!-- MILESTONES PANEL -->
+      <div id="apane-milestones" style="display:none">
+        <div style="background:var(--bg3);border-radius:10px;padding:14px;margin-bottom:16px;border:1px solid var(--border)">
+          <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px" id="ms-form-title">NUEVO MILESTONE</div>
+          <input type="hidden" id="ms-edit-id">
+          <div class="form-row"><label class="form-label">NOMBRE *</label><input type="text" class="form-input" id="ms-name" placeholder="Ej: Core Loop listo, Alpha interna…"></div>
+          <div class="form-grid">
+            <div class="form-row"><label class="form-label">FECHA LÍMITE *</label><input type="date" class="form-input" id="ms-date"></div>
+            <div class="form-row"><label class="form-label">ÁREA</label>
+              <select class="form-input" id="ms-area">
+                <option value="">General</option>
+                <option value="produccion">Producción</option><option value="arte">Arte</option>
+                <option value="audio">Audio</option><option value="diseno">Diseño</option>
+                <option value="qa">QA</option><option value="marketing">Marketing</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button class="btn btn-amber" onclick="saveMilestone()" style="flex:1;justify-content:center">✓ GUARDAR MILESTONE</button>
+            <button class="btn btn-ghost btn-sm" id="ms-cancel-edit" style="display:none" onclick="cancelMilestoneEdit()">CANCELAR</button>
+          </div>
+        </div>
+        <div id="milestones-list"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TASK MODAL -->
+<div class="modal-overlay" id="modal-task">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="task-modal-title">AÑADIR TAREA</div>
+      <span class="modal-close" onclick="closeModal('task')">✕</span>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="task-edit-id">
+      <div class="form-row"><label class="form-label">NOMBRE DE LA TAREA *</label><input type="text" class="form-input" id="task-name" placeholder="Descripción de la tarea…"></div>
+      <div class="form-grid">
+        <div class="form-row"><label class="form-label">ÁREA</label>
+          <select class="form-input" id="task-area">
+            <option value="produccion">Producción</option><option value="arte">Arte</option>
+            <option value="audio">Audio</option><option value="marketing">Marketing</option>
+            <option value="business">Business</option><option value="qa">QA</option><option value="otro">Otro</option>
+          </select>
+        </div>
+        <div class="form-row"><label class="form-label">ASIGNADA A</label>
+          <select class="form-input" id="task-role"><option value="">Sin asignar</option></select>
+        </div>
+        <div class="form-row"><label class="form-label">SPRINT</label>
+          <select class="form-input" id="task-sprint"><option value="">Sin sprint (backlog)</option></select>
+        </div>
+        <div class="form-row"><label class="form-label">MILESTONE</label>
+          <select class="form-input" id="task-milestone"><option value="">Sin milestone</option></select>
+        </div>
+        <div class="form-row"><label class="form-label">STATUS</label>
+          <select class="form-input" id="task-status">
+            <option value="backlog">Backlog</option><option value="wip">En Progreso</option>
+            <option value="review">Review</option><option value="done">Done</option>
+          </select>
+        </div>
+        <div class="form-row"><label class="form-label">HORAS ESTIMADAS</label><input type="number" class="form-input" id="task-hours-est" placeholder="0" min="0" step="0.5"></div>
+        <div class="form-row"><label class="form-label">HORAS REALES</label><input type="number" class="form-input" id="task-hours-real" placeholder="0" min="0" step="0.5"></div>
+      </div>
+      <div class="form-row"><label class="form-label">NOTAS</label><input type="text" class="form-input" id="task-notes" placeholder="Notas opcionales…"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('task')">CANCELAR</button>
+      <button class="btn btn-red btn-sm" id="btn-del-task" style="display:none;margin-right:auto" onclick="deleteTask(document.getElementById('task-edit-id').value)">🗑 BORRAR</button>
+      <button class="btn btn-amber" onclick="saveTask()">GUARDAR</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp }                          from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getFirestore, collection, doc, getDoc,
+         addDoc, updateDoc, deleteDoc, getDocs,
+         onSnapshot, query, orderBy, where }      from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+// ── AUTH GUARD ────────────────────────────────────────────
+const session = JSON.parse(sessionStorage.getItem('hp_user') || 'null');
+if (!session?.id) { window.location.href = 'firebase-auth.html'; }
+const ME = session;
+
+// ── FIREBASE ──────────────────────────────────────────────
+const app = initializeApp({
+  apiKey:            "AIzaSyAFvf31Iv5aj98MjSs_uiVQ2sR9fWW7MjI",
+  authDomain:        "hot-potato-cc.firebaseapp.com",
+  projectId:         "hot-potato-cc",
+  storageBucket:     "hot-potato-cc.firebasestorage.app",
+  messagingSenderId: "1022137605356",
+  appId:             "1:1022137605356:web:b52d3ba53887caf15659c9"
+});
+const db  = getFirestore(app);
+const col = name => collection(db, name);
+const ref = (name, id) => doc(db, name, id);
+
+// ── CONSTANTS ─────────────────────────────────────────────
+const RATE     = 10;   // €/hora — fijo para todos
+const BASE_H   = 4;    // horas base semanales mínimas
+
+// ── STATE (live) ──────────────────────────────────────────
+let roles = [], tasks = [], sprints = [], hours = [], milestones = [];
+
+// ── HELPERS ───────────────────────────────────────────────
+const uid  = () => Math.random().toString(36).slice(2,9);
+const fmt  = (n,d=0) => (+n||0).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d})+'€';
+const fmtN = (n,d=0) => (+n||0).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
+const gv   = id => { const e=document.getElementById(id); return e?e.value:''; };
+const sv   = (id,v) => { const e=document.getElementById(id); if(e&&v!=null) e.value=v; };
+const sel  = id => document.getElementById(id);
+
+const AREA_COLORS = {
+  produccion:'#2E6FCC', arte:'#7B4FBB', audio:'#2A9D8F',
+  marketing:'#C9A428',  business:'#E07030', qa:'#3CA050', otro:'#6B6560'
+};
+const STATUS_CFG = {
+  backlog:{ cls:'tg-x', l:'Backlog'    },
+  wip:    { cls:'tg-b', l:'En Progreso'},
+  review: { cls:'tg-a', l:'Review'     },
+  done:   { cls:'tg-g', l:'Done ✓'     },
+};
+const TYPE_CFG = {
+  interno:  { cls:'tg-b', l:'Interno'   },
+  freelance:{ cls:'tg-a', l:'Freelance' },
+  externo:  { cls:'tg-p', l:'Externo'   },
+};
+const tag  = (t,c) => `<span class="tag ${c}">${t}</span>`;
+const tagS = s => { const c=STATUS_CFG[s]||{cls:'tg-x',l:s}; return tag(c.l,c.cls); };
+const tagT = t => { const c=TYPE_CFG[t]||{cls:'tg-x',l:t}; return tag(c.l,c.cls); };
+
+function toast(msg, err=false) {
+  const t=sel('toast'); t.textContent=msg; t.className='show'+(err?' err':'');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='',3000);
+}
+
+// ── TABS ─────────────────────────────────────────────────
+window.switchTab = function(tab) {
+  sel('pane-equipo').style.display  = tab==='equipo'   ? '' : 'none';
+  sel('pane-misprint').style.display= tab==='misprint' ? '' : 'none';
+  sel('tab-equipo').classList.toggle('active',   tab==='equipo');
+  sel('tab-misprint').classList.toggle('active', tab==='misprint');
+};
+setInterval(()=>{ sel('h-clock').textContent=new Date().toLocaleTimeString('es-ES'); },1000);
+
+// ── INIT UI ──────────────────────────────────────────────
+sel('h-user').textContent = ME.name + (ME.isAdmin ? ' · ADMIN' : '');
+if (ME.isAdmin) {
+  sel('btn-admin').style.display   = '';
+  sel('btn-add-task').style.display= '';
+}
+
+window.logout = function() {
+  sessionStorage.removeItem('hp_user');
+  window.location.href = 'firebase-auth.html';
+};
+
+// ── STATE ─────────────────────────────────────────────────
+let users = [];
+
+// ── REAL-TIME LISTENERS ───────────────────────────────────
+onSnapshot(query(col('users'), orderBy('name')), snap => {
+  users = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderAdminUsers();
+});
+onSnapshot(query(col('roles'), orderBy('name')), snap => {
+  roles = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderRoles(); renderTasks(); renderSprintBoard(); renderAreaHours();
+  renderMyRoles();
+});
+onSnapshot(query(col('milestones'), orderBy('date','asc')), snap => {
+  milestones = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderMilestonesOverview();
+  renderMilestonesList();
+});
+onSnapshot(col('tasks'), snap => {
+  tasks = snap.docs.map(d=>({id:d.id,...d.data()}));
+  sel('badge-tasks').textContent = tasks.length;
+  autoReassignTasks();
+  renderTasks(); renderSprintBoard(); renderAreaHours(); renderMetrics(); renderMyTasks(); renderMilestonesOverview();
+});
+onSnapshot(query(col('sprints'), orderBy('startDate','asc')), snap => {
+  sprints = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderMetrics();
+});
+onSnapshot(col('hours'), snap => {
+  hours = snap.docs.map(d=>({id:d.id,...d.data()}));
+  renderMetrics();
+});
+
+// ── COMPUTED ─────────────────────────────────────────────
+const activeSprint  = () => sprints.find(s=>s.status==='active');
+const myHoursEntry  = spId => hours.find(h=>h.userId===ME.id && h.sprintId===spId);
+const myTasks       = spId => tasks.filter(t=>t.assignee===ME.id && t.sprintId===spId);
+const sprintDone    = (uid, spId) => { const t=tasks.filter(x=>x.assignee===uid&&x.sprintId===spId); return t.length>0&&t.every(x=>x.status==='done'); };
+const effH          = e => e ? Math.max(+e.hoursExpected||BASE_H, BASE_H) : BASE_H;
+
+// ── RENDER METRICS ────────────────────────────────────────
+function renderMetrics() {
+  const sp = activeSprint();
+
+  // ─ Sprint KPIs (all users see) ─
+  const spTasks     = sp ? tasks.filter(t=>t.sprintId===sp.id) : [];
+  const spDone      = spTasks.filter(t=>t.status==='done').length;
+  const spPct       = spTasks.length ? Math.round(spDone/spTasks.length*100) : 0;
+  const spHours     = sp ? hours.filter(h=>h.sprintId===sp.id) : [];
+  const totalExpH   = spHours.reduce((s,h)=>s+(+h.hoursExpected||0),0);
+  const totalActH   = spHours.reduce((s,h)=>s+(+h.hoursActual||0),0);
+  const totalValH   = spHours.filter(h=>h.validated).reduce((s,h)=>s+effH(h),0);
+  const sprintCost  = totalValH * RATE;
+
+  const pctColor = spPct===100?'var(--green)':spPct>=60?'var(--gold)':'var(--blue)';
+
+  sel('sprint-metrics').innerHTML = [
+    { l:'COSTE POR HORA',   v:`${RATE}€`,                    sub:'igual para todo el equipo',   c:'var(--gold)' },
+    { l:'TAREAS COMPLETADAS',v:`${spDone}/${spTasks.length}`, sub:`${spPct}% del sprint`,        c:pctColor      },
+    { l:'COSTE TOTAL SPRINT',v:sp?`${fmt(sprintCost)}`:'—',  sub:'horas validadas × 10€',       c:'var(--purple)'},
+    { l:'H ESPERADAS EQUIPO',v:sp?`${fmtN(totalExpH,1)}h`:'—', sub:'suma de horas pactadas',    c:'var(--blue)' },
+    { l:'H TRABAJADAS EQUIPO',v:sp?`${fmtN(totalActH,1)}h`:'—', sub:'horas reales registradas', c:'var(--teal)' },
+  ].map(k=>`
+    <div class="metric-card">
+      <div class="mc-label">${k.l}</div>
+      <div class="mc-val" style="color:${k.c}">${k.v}</div>
+      <div class="mc-sub">${k.sub}</div>
+    </div>
+  `).join('');
+
+  // ─ My hours (only I see) ─
+  renderMyHours(sp);
+
+  // ─ Team hours anon ─
+  renderTeamHours(sp, spHours);
+
+  // ─ My total ─
+  renderMyTotal();
+}
+
+// ── MY HOURS WIDGET ───────────────────────────────────────
+function renderMyHours(sp) {
+  const sec = sel('my-hours-section'); if(!sec) return;
+  if(!sp) {
+    sec.innerHTML = `
+      <div class="mhc-eyebrow">MIS HORAS · SPRINT ACTUAL</div>
+      <div style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(237,232,223,.3);padding:8px 0">Sin sprint activo</div>`;
+    return;
+  }
+  const entry    = myHoursEntry(sp.id);
+  const expH     = +entry?.hoursExpected || 0;
+  const actH     = +entry?.hoursActual   || 0;
+  const validated= entry?.validated      || false;
+  const mySpTasks= myTasks(sp.id);
+  const myDone   = mySpTasks.filter(t=>t.status==='done').length;
+  const myPct    = mySpTasks.length ? Math.round(myDone/mySpTasks.length*100) : 0;
+  const earnH    = validated ? effH(entry) : expH;
+  const earnVal  = earnH * RATE;
+
+  sec.innerHTML = `
+    <div class="mhc-eyebrow">MIS HORAS · ${sp.name||'SPRINT ACTIVO'}</div>
+    <div class="mhc-grid">
+      <div class="mhc-box">
+        <div class="mhc-box-lbl">HORAS PACTADAS</div>
+        ${validated
+          ? `<div class="mhc-box-val">${fmtN(expH,1)}h</div><div class="mhc-box-sub">✅ Convalidadas</div>`
+          : `<input type="number" class="mhc-inp" id="inp-exp-h" value="${expH||''}" min="0" step="0.5" placeholder="${BASE_H}">
+             <div class="mhc-box-sub">Acordado en reunión (mín ${BASE_H}h)</div>`
+        }
+      </div>
+      <div class="mhc-box">
+        <div class="mhc-box-lbl">HORAS REALES</div>
+        ${validated
+          ? `<div class="mhc-box-val green">${fmtN(expH,1)}h</div><div class="mhc-box-sub">Sprint completado ✓</div>`
+          : `<input type="number" class="mhc-inp" id="inp-act-h" value="${actH||''}" min="0" step="0.5" placeholder="0">
+             <div class="mhc-box-sub">Lo que llevas hasta ahora</div>`
+        }
+      </div>
+    </div>
+    <div class="mhc-earn">
+      <div class="mhc-earn-lbl">${validated?'GANADO ESTE SPRINT':'ESTIMADO SI COMPLETAS'}</div>
+      <div class="mhc-earn-val">${fmt(earnVal)}</div>
+    </div>
+    ${validated
+      ? `<div class="mhc-validated">✅ Sprint completado — <strong>${fmtN(effH(entry),1)}h</strong> convalidadas · <strong>${fmt(effH(entry)*RATE)}</strong></div>`
+      : `<div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px">
+          <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(237,232,223,.3)">Mis tareas: <strong style="color:rgba(237,232,223,.6)">${myDone}/${mySpTasks.length}</strong> · ${myPct}%</div>
+          <button class="mhc-save-btn" style="width:auto;padding:7px 16px" onclick="saveMyHours('${sp.id}')">GUARDAR HORAS</button>
+        </div>`
+    }`;
+}
+
+// ── TEAM HOURS ANON ───────────────────────────────────────
+function renderTeamHours(sp, spHours) {
+  const sec = sel('team-hours-section'); if(!sec) return;
+  if(!sp || !spHours.length) {
+    sec.innerHTML = `<div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);text-align:center;padding:16px">Sin datos de horas este sprint</div>`;
+    return;
+  }
+  // Count members with hours (anonymous)
+  const withHours = spHours.length;
+  const totalExp  = spHours.reduce((s,h)=>s+(+h.hoursExpected||0),0);
+  const totalAct  = spHours.reduce((s,h)=>s+(+h.hoursActual||0),0);
+  const validated = spHours.filter(h=>h.validated).length;
+  const pct       = totalExp>0 ? Math.min(totalAct/totalExp*100,100) : 0;
+
+  sec.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
+      ${[
+        {l:'MIEMBROS CON HORAS', v:withHours, c:'var(--text)'},
+        {l:'SPRINTS COMPLETADOS', v:validated, c:'var(--green)'},
+        {l:'H ESPERADAS TOTAL',   v:fmtN(totalExp,1)+'h', c:'var(--blue)'},
+        {l:'H TRABAJADAS TOTAL',  v:fmtN(totalAct,1)+'h', c:'var(--teal)'},
+      ].map(k=>`
+        <div style="background:var(--card2);border-radius:8px;padding:10px 12px;border:1px solid var(--border)">
+          <div style="font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:1px;margin-bottom:4px">${k.l}</div>
+          <div style="font-family:'Bangers',cursive;font-size:22px;letter-spacing:1px;color:${k.c}">${k.v}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-bottom:5px;display:flex;justify-content:space-between">
+      <span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">Progreso horas del equipo</span>
+      <span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">${Math.round(pct)}%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${pct>=100?'var(--green)':pct>=60?'var(--gold)':'var(--blue)'}"></div></div>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:8px;text-align:center">
+      Los datos son anónimos — solo tú ves tus horas en detalle
+    </div>`;
+}
+
+// ── MY TOTAL ──────────────────────────────────────────────
+function renderMyTotal() {
+  const sec = sel('my-total-section'); if(!sec) return;
+  const myAll     = hours.filter(h=>h.userId===ME.id);
+  const totalH    = myAll.filter(h=>h.validated).reduce((s,h)=>s+effH(h),0);
+  const totalAct  = myAll.reduce((s,h)=>s+(+h.hoursActual||0),0);
+  const totalEarn = totalH * RATE;
+  const spDone    = myAll.filter(h=>h.validated).length;
+
+  sec.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      ${[
+        {l:'H VALIDADAS TOTAL',  v:fmtN(totalH,1)+'h',  c:'var(--gold)'},
+        {l:'H TRABAJADAS TOTAL', v:fmtN(totalAct,1)+'h', c:'var(--blue)'},
+        {l:'SPRINTS COMPLETADOS',v:spDone,                c:'var(--green)'},
+      ].map(k=>`
+        <div style="text-align:center;padding:10px;background:var(--card2);border-radius:8px;border:1px solid var(--border)">
+          <div style="font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:4px">${k.l}</div>
+          <div style="font-family:'Bangers',cursive;font-size:24px;letter-spacing:1px;color:${k.c}">${k.v}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:baseline;justify-content:space-between">
+      <span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px">MI TOTAL ACUMULADO</span>
+      <span style="font-family:'Bangers',cursive;font-size:28px;letter-spacing:1px;color:var(--gold)">${fmt(totalEarn)}</span>
+    </div>
+    <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);text-align:right;margin-top:2px">@ ${RATE}€/h · horas convalidadas</div>`;
+}
+
+// ── SAVE MY HOURS ─────────────────────────────────────────
+window.saveMyHours = async function(spId) {
+  const expH = +document.getElementById('inp-exp-h')?.value || BASE_H;
+  const actH = +document.getElementById('inp-act-h')?.value || 0;
+  const existing = myHoursEntry(spId);
+  const data = { userId:ME.id, sprintId:spId, hoursExpected:expH, hoursActual:actH, validated:false };
+  try {
+    if(existing) { await updateDoc(ref('hours',existing.id), {hoursExpected:expH, hoursActual:actH}); }
+    else         { await addDoc(col('hours'), {...data, createdAt:new Date().toISOString()}); }
+    // Check if should auto-validate
+    const sp = activeSprint();
+    if(sp && sprintDone(ME.id, sp.id)) {
+      const entry = hours.find(h=>h.userId===ME.id&&h.sprintId===sp.id);
+      if(entry && !entry.validated) {
+        await updateDoc(ref('hours',entry.id||existing?.id), {validated:true});
+        toast(`🎉 Sprint completado · ${fmtN(effH({hoursExpected:expH}),1)}h → ${fmt(effH({hoursExpected:expH})*RATE)}`);
+        return;
+      }
+    }
+    toast('✓ Horas guardadas');
+  } catch(e) { toast('Error: '+e.message, true); }
+};
+
+// ── POPUP ─────────────────────────────────────────────────
+window.closePopup = function(dontShow) {
+  sel('vibe-popup').classList.add('hidden');
+  if(dontShow) localStorage.setItem('hp_popup_seen_'+ME.id, '1');
+};
+function checkPopup() {
+  const seen = localStorage.getItem('hp_popup_seen_'+ME.id);
+  if(!seen) sel('vibe-popup').classList.remove('hidden');
+}
+checkPopup();
+
+// ── RENDER MY TASKS ───────────────────────────────────────
+function renderMyTasks() {
+  const tbody = sel('my-tasks-tbody'); if(!tbody) return;
+  const sp    = activeSprint();
+  const mine  = sp ? tasks.filter(t=>t.assignee===ME.id && t.sprintId===sp.id) : [];
+  const done  = mine.filter(t=>t.status==='done').length;
+  const pct   = mine.length ? Math.round(done/mine.length*100) : 0;
+  const pctEl = sel('my-tasks-pct');
+  if(pctEl) pctEl.textContent = mine.length ? `${done}/${mine.length} · ${pct}%` : 'Sin tareas asignadas';
+
+  if(!mine.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:20px">${sp?'Sin tareas asignadas en este sprint':'Sin sprint activo'}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = mine.map(t=>{
+    const ovr = (t.hoursReal||0)>(t.hoursEst||0) && (t.hoursEst||0)>0;
+    return `<tr>
+      <td style="color:var(--dark);font-weight:500">${t.name}${t.notes?`<div style="font-size:9px;color:var(--muted)">${t.notes}</div>`:''}</td>
+      <td><span style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:${AREA_COLORS[t.area]||'#888'}">${(t.area||'').toUpperCase()}</span></td>
+      <td>${tagS(t.status)}</td>
+      <td class="r">${t.hoursEst?fmtN(t.hoursEst)+'h':'—'}</td>
+      <td class="r ${ovr?'c-red':''}">${t.hoursReal?fmtN(t.hoursReal)+'h':'—'}</td>
+      <td class="r" style="white-space:nowrap">
+        <button class="btn btn-ghost btn-sm" onclick="cycleStatus('${t.id}','${t.status}')">→</button>
+        ${ME.isAdmin?`<button class="btn btn-ghost btn-sm" onclick="openModal('task','${t.id}')">✏</button>`:''}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+window.cycleStatus = async function(id, current) {
+  const cycle = { backlog:'wip', wip:'review', review:'done', done:'backlog' };
+  const next  = cycle[current]||'wip';
+  try { await updateDoc(ref('tasks',id),{status:next}); }
+  catch(e) { toast('Error: '+e.message, true); }
+};
+// roles schema: { userId, userName, name, dept }
+function renderRoles() {
+  const tbody = sel('roles-tbody'); if(!tbody) return;
+  const DEPT_COLORS = {
+    produccion:'#2E6FCC', arte:'#7B4FBB', audio:'#2A9D8F',
+    diseno:'#C9A428', qa:'#3CA050', marketing:'#B87820', business:'#E07030', otro:'#6B6560'
+  };
+  if(!roles.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px">Sin roles aún — cada miembro añade los suyos desde Mi Perfil</td></tr>';
+    return;
+  }
+  // Group by user
+  const byUser = {};
+  roles.forEach(r => {
+    if(!byUser[r.userId]) byUser[r.userId] = { userName:r.userName||r.userId, roles:[] };
+    byUser[r.userId].roles.push(r);
+  });
+  tbody.innerHTML = Object.entries(byUser).map(([uid, data]) =>
+    data.roles.map((r,i) => `<tr>
+      ${i===0 ? `<td rowspan="${data.roles.length}" style="color:var(--dark);font-weight:600;vertical-align:top;padding-top:12px">${data.userName}${uid===ME.id?' <span style="font-size:9px;color:var(--gold)">(tú)</span>':''}</td>` : ''}
+      <td style="color:var(--dark)">${r.name}</td>
+      <td><span style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:${DEPT_COLORS[r.dept]||'#6B6560'}">${(r.dept||'otro').toUpperCase()}</span></td>
+      <td class="r c-amber" style="font-family:'Space Mono',monospace;font-size:10px">${RATE}€</td>
+    </tr>`).join('')
+  ).join('');
+}
+
+// ── MI PERFIL — ROLES ─────────────────────────────────────
+function renderMyRoles() {
+  const el = sel('my-roles-list'); if(!el) return;
+  const mine = roles.filter(r=>r.userId===ME.id);
+  if(!mine.length) {
+    el.innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:10px;color:var(--muted);padding:8px 0">Sin roles — añade el primero abajo</div>';
+    return;
+  }
+  el.innerHTML = mine.map(r=>`
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;margin-bottom:6px">
+      <div>
+        <span style="font-size:13px;color:var(--dark);font-weight:500">${r.name}</span>
+        <span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-left:8px">${r.dept?.toUpperCase()}</span>
+      </div>
+      <button class="btn btn-red btn-sm" onclick="deleteMyRole('${r.id}')">🗑</button>
+    </div>`).join('');
+}
+
+window.addMyRole = async function() {
+  const name = gv('new-role-name').trim();
+  const dept = gv('new-role-dept');
+  if(!name) { toast('Introduce el nombre del rol', true); return; }
+  try {
+    await addDoc(col('roles'), { userId:ME.id, userName:ME.name, name, dept, rate:RATE, createdAt:new Date().toISOString() });
+    sel('new-role-name').value = '';
+    toast('✓ Rol añadido');
+  } catch(e) { toast('Error: '+e.message, true); }
+};
+
+window.deleteMyRole = async function(id) {
+  if(!confirm('¿Eliminar este rol?')) return;
+  try { await deleteDoc(ref('roles',id)); toast('✓ Rol eliminado'); }
+  catch(e) { toast('Error: '+e.message, true); }
+};
+
+// ── CAMBIAR PIN ───────────────────────────────────────────
+window.changePin = async function() {
+  const cur  = gv('pin-current').trim();
+  const nw   = gv('pin-new').trim();
+  const msg  = sel('pin-msg');
+  if(!/^\d{4}$/.test(cur)) { msg.style.color='var(--red)'; msg.textContent='PIN actual: 4 dígitos'; return; }
+  if(!/^\d{4}$/.test(nw))  { msg.style.color='var(--red)'; msg.textContent='PIN nuevo: 4 dígitos'; return; }
+  const hashPin = p => { let h=0; for(const c of p) h=(Math.imul(31,h)+c.charCodeAt(0))|0; return Math.abs(h).toString(16); };
+  // Verify current user data from Firestore
+  const { getDoc } = await import('https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js');
+  const snap = await getDoc(ref('users', ME.id));
+  if(!snap.exists() || snap.data().pin !== hashPin(cur)) {
+    msg.style.color='var(--red)'; msg.textContent='PIN actual incorrecto'; return;
+  }
+  try {
+    await updateDoc(ref('users', ME.id), { pin: hashPin(nw) });
+    msg.style.color='var(--green)'; msg.textContent='✓ PIN actualizado';
+    sel('pin-current').value=''; sel('pin-new').value='';
+    setTimeout(()=>msg.textContent='', 3000);
+  } catch(e) { msg.style.color='var(--red)'; msg.textContent='Error: '+e.message; }
+};
+
+// ── ADMIN — USUARIOS ──────────────────────────────────────
+function renderAdminUsers() {
+  const el = sel('admin-users-list'); if(!el) return;
+  if(!users.length) { el.innerHTML='<div style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:10px">Sin miembros</div>'; return; }
+  el.innerHTML = `<table class="data-table">
+    <thead><tr><th>NOMBRE</th><th>ROL</th><th class="r">HORAS VALIDADAS</th><th class="r">GANADO</th><th></th></tr></thead>
+    <tbody>${users.map(u=>{
+      const uH  = hours.filter(h=>h.userId===u.id&&h.validated).reduce((s,h)=>s+(+h.hoursExpected||BASE_H),0);
+      const earn= uH * RATE;
+      return `<tr>
+        <td style="color:var(--dark);font-weight:500">${u.name}${u.id===ME.id?' <span style="font-size:9px;color:var(--gold)">(tú)</span>':''}</td>
+        <td>${u.isAdmin?'<span class="tag tg-a">Admin</span>':'<span class="tag tg-x">Miembro</span>'}</td>
+        <td class="r" style="font-family:\'Space Mono\',monospace">${fmtN(uH,1)}h</td>
+        <td class="r c-amber" style="font-family:\'Space Mono\',monospace">${fmt(earn)}</td>
+        <td class="r" style="white-space:nowrap">
+          <button class="btn btn-ghost btn-sm" onclick="resetUserPin('${u.id}','${u.name}')">🔑 PIN</button>
+          ${u.id!==ME.id?`<button class="btn btn-red btn-sm" onclick="delUser('${u.id}','${u.name}')">🗑</button>`:''}
+        </td>
+      </tr>`;
+    }).join('')}</tbody>
+  </table>`;
+}
+
+window.addUser = async function() {
+  const name = gv('au-name').trim();
+  const pin  = gv('au-pin').trim();
+  const role = gv('au-role');
+  const msg  = sel('au-msg');
+  if(!name) { msg.style.color='var(--red)'; msg.textContent='El nombre es obligatorio'; return; }
+  if(!/^\d{4}$/.test(pin)) { msg.style.color='var(--red)'; msg.textContent='PIN debe ser 4 dígitos'; return; }
+  if(users.find(u=>u.name.toLowerCase()===name.toLowerCase())) { msg.style.color='var(--red)'; msg.textContent='Ese nombre ya existe'; return; }
+  const hashPin = p => { let h=0; for(const c of p) h=(Math.imul(31,h)+c.charCodeAt(0))|0; return Math.abs(h).toString(16); };
+  try {
+    msg.style.color='var(--muted)'; msg.textContent='Guardando…';
+    await addDoc(col('users'), { name, pin:hashPin(pin), isAdmin:role==='admin', createdAt:new Date().toISOString() });
+    sel('au-name').value=''; sel('au-pin').value='';
+    msg.style.color='var(--green)'; msg.textContent=`✓ ${name} añadido`;
+    setTimeout(()=>msg.textContent='', 3000);
+    toast(`✓ ${name} añadido al equipo`);
+  } catch(e) { msg.style.color='var(--red)'; msg.textContent='Error: '+e.message; }
+};
+
+// ── AUTO-REASSIGN TASKS ───────────────────────────────────
+// When a sprint closes, unfinished tasks move to next sprint
+// and get flagged as carried over
+async function autoReassignTasks() {
+  const doneSprints = sprints.filter(s=>s.status==='done');
+  const nextSprint  = sprints.find(s=>s.status==='active') ||
+                      sprints.find(s=>s.status==='planned');
+  if(!nextSprint) return;
+
+  for(const sp of doneSprints) {
+    const pending = tasks.filter(t=>
+      t.sprintId===sp.id &&
+      t.status!=='done' &&
+      !t.carriedFrom  // not already reassigned
+    );
+    for(const t of pending) {
+      try {
+        await updateDoc(ref('tasks',t.id), {
+          sprintId:   nextSprint.id,
+          carriedFrom: sp.id,
+          carriedFromName: sp.name,
+        });
+      } catch(e) { console.warn('Reassign error', e); }
+    }
+  }
+}
+
+// ── TASK BADGES HELPER ────────────────────────────────────
+function taskBadge(t) {
+  if(!t.carriedFrom) return '';
+  // Check if any linked milestone is overdue
+  const ms = milestones.find(m=>m.id===t.milestoneId);
+  const overdue = ms && new Date(ms.date) < new Date();
+  return overdue
+    ? `<span class="badge-urgent">🚨 URGENTE</span>`
+    : `<span class="badge-prev">⚠ SPRINT ANTERIOR</span>`;
+}
+
+// ── RENDER MILESTONES OVERVIEW ────────────────────────────
+function renderMilestonesOverview() {
+  const el = sel('milestones-overview'); if(!el) return;
+  if(!milestones.length) {
+    el.innerHTML='<div style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:10px">Sin milestones — el admin puede añadirlos</div>';
+    return;
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
+  el.innerHTML = milestones.map(ms=>{
+    const msTasks  = tasks.filter(t=>t.milestoneId===ms.id);
+    const done     = msTasks.filter(t=>t.status==='done').length;
+    const total    = msTasks.length;
+    const pct      = total ? Math.round(done/total*100) : 0;
+    const deadline = new Date(ms.date+'T00:00:00');
+    const daysLeft = Math.ceil((deadline-today)/(1000*60*60*24));
+    const overdue  = daysLeft < 0;
+    const urgent   = !overdue && daysLeft <= 7;
+    const dotColor = overdue ? 'var(--red)' : urgent ? 'var(--amber)' : 'var(--green)';
+    const dateColor= overdue ? 'var(--red)' : urgent ? 'var(--amber)' : 'var(--green)';
+    const AREA_COLORS2 = { produccion:'#2E6FCC', arte:'#7B4FBB', audio:'#2A9D8F', diseno:'#C9A428', qa:'#3CA050', marketing:'#B87820' };
+
+    return `<div class="ms-item">
+      <div class="ms-dot" style="background:${dotColor}"></div>
+      <div class="ms-body">
+        <div class="ms-name">${ms.name}${ms.area?` <span style="font-family:'Space Mono',monospace;font-size:8px;color:${AREA_COLORS2[ms.area]||'var(--muted)'}">${ms.area.toUpperCase()}</span>`:''}</div>
+        <div class="ms-meta">${ms.date} · ${total} tareas</div>
+        ${total>0?`
+          <div class="ms-prog-row"><span>${done}/${total} completadas</span><span>${pct}%</span></div>
+          <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--green)':dotColor}"></div></div>
+          ${overdue&&done<total?`<div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--red);margin-top:4px">🚨 ${total-done} tarea${total-done>1?'s':''} pendiente${total-done>1?'s':''} — DEADLINE PASADO</div>`:''}
+        `:'<div style="font-family:\'Space Mono\',monospace;font-size:9px;color:var(--muted);margin-top:4px">Sin tareas asignadas</div>'}
+      </div>
+      <div class="ms-right">
+        <div class="ms-date-val" style="color:${dateColor}">${overdue?`+${Math.abs(daysLeft)}d`:daysLeft===0?'HOY':daysLeft+'d'}</div>
+        <div class="ms-days">${overdue?'tarde':'restantes'}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── MILESTONE CRUD ────────────────────────────────────────
+function renderMilestonesList() {
+  const el = sel('milestones-list'); if(!el) return;
+  if(!milestones.length) {
+    el.innerHTML='<div style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:10px;text-align:center;padding:12px">Sin milestones</div>';
+    return;
+  }
+  const today = new Date(); today.setHours(0,0,0,0);
+  el.innerHTML = milestones.map(ms=>{
+    const msTasks = tasks.filter(t=>t.milestoneId===ms.id);
+    const done    = msTasks.filter(t=>t.status==='done').length;
+    const dl      = new Date(ms.date+'T00:00:00');
+    const overdue = dl < today;
+    return `<div style="padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:10px">
+      <div>
+        <div style="font-weight:600;color:var(--dark)">${ms.name}</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:${overdue?'var(--red)':'var(--muted)'}">${ms.date} · ${done}/${msTasks.length} tareas${overdue?' 🚨':''}</div>
+      </div>
+      <div style="display:flex;gap:4px;flex-shrink:0">
+        <button class="btn btn-ghost btn-sm" onclick="editMilestone('${ms.id}')">✏</button>
+        <button class="btn btn-red btn-sm" onclick="delMilestone('${ms.id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.saveMilestone = async function() {
+  const eid  = gv('ms-edit-id');
+  const obj  = { name:gv('ms-name'), date:gv('ms-date'), area:gv('ms-area') };
+  if(!obj.name||!obj.date) { toast('Nombre y fecha obligatorios',true); return; }
+  try {
+    if(eid) { await updateDoc(ref('milestones',eid), obj); toast('✓ Milestone actualizado'); }
+    else    { await addDoc(col('milestones'), {...obj, createdAt:new Date().toISOString()}); toast('✓ Milestone creado'); }
+    cancelMilestoneEdit();
+  } catch(e) { toast('Error: '+e.message, true); }
+};
+
+window.editMilestone = function(id) {
+  const ms = milestones.find(m=>m.id===id); if(!ms) return;
+  sv('ms-edit-id',ms.id); sv('ms-name',ms.name); sv('ms-date',ms.date); sv('ms-area',ms.area||'');
+  sel('ms-form-title').textContent = 'EDITAR MILESTONE';
+  sel('ms-cancel-edit').style.display = '';
+};
+
+window.cancelMilestoneEdit = function() {
+  sv('ms-edit-id',''); sv('ms-name',''); sv('ms-date',''); sv('ms-area','');
+  sel('ms-form-title').textContent = 'NUEVO MILESTONE';
+  sel('ms-cancel-edit').style.display = 'none';
+};
+
+window.delMilestone = async function(id) {
+  const ms = milestones.find(m=>m.id===id);
+  if(!ms||!confirm(`¿Eliminar "${ms.name}"?`)) return;
+  try { await deleteDoc(ref('milestones',id)); toast('✓ Milestone eliminado'); }
+  catch(e) { toast('Error: '+e.message, true); }
+};
+window.adminTab = function(tab) {
+  ['users','sprints','milestones'].forEach(t=>{
+    sel('atab-'+t)?.classList.toggle('active', t===tab);
+    const p=sel('apane-'+t); if(p) p.style.display = t===tab ? '' : 'none';
+  });
+  if(tab==='sprints')    renderSprintsList();
+  if(tab==='milestones') renderMilestonesList();
+};
+
+// ── SPRINT CRUD ───────────────────────────────────────────
+function renderSprintsList() {
+  const el = sel('sprints-list'); if(!el) return;
+  if(!sprints.length) {
+    el.innerHTML='<div style="color:var(--muted);font-family:\'Space Mono\',monospace;font-size:10px;text-align:center;padding:16px">Sin sprints — crea el primero arriba</div>';
+    return;
+  }
+  const statusCfg = {
+    planned: { cls:'tg-x', l:'Planificado' },
+    active:  { cls:'tg-a', l:'🏃 Activo'  },
+    done:    { cls:'tg-g', l:'Completado'  },
+  };
+  el.innerHTML = sprints.slice().reverse().map(sp=>{
+    const spTasks = tasks.filter(t=>t.sprintId===sp.id||t.sprint===sp.name);
+    const done    = spTasks.filter(t=>t.status==='done').length;
+    const sc      = statusCfg[sp.status]||statusCfg.planned;
+    return `<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+          <span style="font-weight:600;color:var(--dark)">${sp.name}</span>
+          ${tag(sc.l, sc.cls)}
+        </div>
+        ${sp.startDate||sp.endDate?`<div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">${sp.startDate||'—'} → ${sp.endDate||'—'}</div>`:''}
+        ${sp.goal?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${sp.goal}</div>`:''}
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px">${done}/${spTasks.length} tareas</div>
+      </div>
+      <div style="display:flex;gap:4px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+        ${sp.status==='planned'?`<button class="btn btn-amber btn-sm" onclick="setSprintStatus('${sp.id}','active')">▶ ACTIVAR</button>`:''}
+        ${sp.status==='active'?`<button class="btn btn-red btn-sm" onclick="setSprintStatus('${sp.id}','done')">■ CERRAR</button>`:''}
+        <button class="btn btn-ghost btn-sm" onclick="editSprint('${sp.id}')">✏</button>
+        ${sp.status==='planned'?`<button class="btn btn-red btn-sm" onclick="delSprint('${sp.id}')">🗑</button>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.saveSprint = async function() {
+  const eid  = gv('sp-edit-id');
+  const obj  = { name:gv('sp-name'), startDate:gv('sp-start'), endDate:gv('sp-end'), goal:gv('sp-goal') };
+  if(!obj.name) { toast('El nombre es obligatorio',true); return; }
+  try {
+    if(eid) {
+      await updateDoc(ref('sprints',eid), obj);
+      toast('✓ Sprint actualizado');
+    } else {
+      await addDoc(col('sprints'), {...obj, status:'planned', createdAt:new Date().toISOString()});
+      toast('✓ Sprint creado');
+    }
+    cancelSprintEdit();
+    renderSprintsList();
+  } catch(e) { toast('Error: '+e.message, true); }
+};
+
+window.editSprint = function(id) {
+  const sp = sprints.find(s=>s.id===id); if(!sp) return;
+  sv('sp-edit-id',sp.id); sv('sp-name',sp.name);
+  sv('sp-start',sp.startDate||''); sv('sp-end',sp.endDate||''); sv('sp-goal',sp.goal||'');
+  sel('sprint-form-title').textContent = 'EDITAR SPRINT';
+  sel('sp-cancel-edit').style.display = '';
+};
+
+window.cancelSprintEdit = function() {
+  sv('sp-edit-id',''); sv('sp-name',''); sv('sp-start',''); sv('sp-end',''); sv('sp-goal','');
+  sel('sprint-form-title').textContent = 'NUEVO SPRINT';
+  sel('sp-cancel-edit').style.display = 'none';
+};
+
+window.setSprintStatus = async function(id, status) {
+  const sp = sprints.find(s=>s.id===id); if(!sp) return;
+  const label = status==='active'?`¿Activar "${sp.name}"? El sprint activo actual se pausará.`:`¿Cerrar "${sp.name}"?`;
+  if(!confirm(label)) return;
+  try {
+    if(status==='active') {
+      // Deactivate any current active sprint first
+      const cur = sprints.find(s=>s.status==='active');
+      if(cur) await updateDoc(ref('sprints',cur.id),{status:'planned'});
+    }
+    await updateDoc(ref('sprints',id),{status});
+    renderSprintsList();
+    toast(`✓ Sprint ${status==='active'?'activado':'cerrado'}`);
+  } catch(e) { toast('Error: '+e.message, true); }
+};
+
+window.delSprint = async function(id) {
+  const sp = sprints.find(s=>s.id===id);
+  if(!sp||!confirm(`¿Eliminar "${sp.name}"?`)) return;
+  try { await deleteDoc(ref('sprints',id)); renderSprintsList(); toast('✓ Sprint eliminado'); }
+  catch(e) { toast('Error: '+e.message, true); }
+};
+
+window.resetUserPin = async function(uid, userName) {
+  const np = prompt(`Nuevo PIN para ${userName} (4 dígitos):`);
+  if(!np||!/^\d{4}$/.test(np)) { toast('PIN inválido',true); return; }
+  const hashPin = p => { let h=0; for(const c of p) h=(Math.imul(31,h)+c.charCodeAt(0))|0; return Math.abs(h).toString(16); };
+  try { await updateDoc(ref('users',uid),{pin:hashPin(np)}); toast(`✓ PIN de ${userName} actualizado`); }
+  catch(e) { toast('Error: '+e.message, true); }
+};
+
+window.delUser = async function(uid, userName) {
+  if(!confirm(`¿Eliminar a ${userName}? Se eliminarán sus roles y horas.`)) return;
+  try {
+    await deleteDoc(ref('users',uid));
+    // clean up roles and hours
+    const rSnap = await getDocs(query(col('roles'),where('userId','==',uid)));
+    await Promise.all(rSnap.docs.map(d=>deleteDoc(d.ref)));
+    const hSnap = await getDocs(query(col('hours'),where('userId','==',uid)));
+    await Promise.all(hSnap.docs.map(d=>deleteDoc(d.ref)));
+    toast(`✓ ${userName} eliminado`);
+  } catch(e) { toast('Error: '+e.message, true); }
+};
+
+// ── RENDER TASKS (backlog table, admin) ───────────────────
+function renderTasks() {
+  const tbody = sel('tasks-tbody'); if(!tbody) return;
+  const areaFilter = gv('filter-area');
+  const filtered   = tasks.filter(t=>!areaFilter||t.area===areaFilter);
+  tbody.innerHTML  = filtered.map(t=>{
+    const assignee = users.find(u=>u.id===t.assignee);
+    const ovr      = (t.hoursReal||0)>(t.hoursEst||0)&&(t.hoursEst||0)>0;
+    return `<tr>
+      <td style="color:var(--dark);font-weight:500">${t.name}${t.notes?`<div style="font-size:9px;color:var(--muted)">${t.notes}</div>`:''}</td>
+      <td><span style="font-family:'Space Mono',monospace;font-size:9px;font-weight:700;color:${AREA_COLORS[t.area]||'#888'}">${(t.area||'').toUpperCase()}</span></td>
+      <td style="color:var(--muted)">${assignee?.name||'—'}</td>
+      <td style="color:var(--muted)">${t.sprint||'—'}</td>
+      <td>${tagS(t.status)}</td>
+      <td class="r">${t.hoursEst?fmtN(t.hoursEst)+'h':'—'}</td>
+      <td class="r ${ovr?'c-red':''}">${t.hoursReal?fmtN(t.hoursReal)+'h':'—'}</td>
+      <td class="r" style="white-space:nowrap">
+        ${ME.isAdmin?`<button class="btn btn-ghost btn-sm" onclick="openModal('task','${t.id}')">✏ editar</button>
+        <button class="btn btn-red btn-sm" onclick="deleteTask('${t.id}')">🗑</button>`:''}
+      </td>
+    </tr>`;
+  }).join('')||'<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:20px">Sin tareas</td></tr>';
+}
+
+// ── RENDER SPRINT BOARD ───────────────────────────────────
+function renderSprintBoard() {
+  const sp   = activeSprint();
+  const cols = { backlog:[], wip:[], review:[], done:[] };
+  tasks
+    .filter(t => !sp || t.sprintId===sp.id || !t.sprintId)
+    .forEach(t=>{ if(cols[t.status]) cols[t.status].push(t); });
+
+  ['backlog','wip','review','done'].forEach(s=>{
+    const el = sel('sc-'+s), nb = sel('sc-'+s+'-n');
+    if(!el) return;
+    nb.textContent = cols[s].length;
+    el.innerHTML = cols[s].map(t=>{
+      const assignee = users.find(u=>u.id===t.assignee);
+      const isMine   = t.assignee===ME.id;
+      const canEdit  = isMine || ME.isAdmin;
+      const ms       = milestones.find(m=>m.id===t.milestoneId);
+      return `<div class="task-card${isMine?' mine':''}" ${canEdit?`onclick="openModal('task','${t.id}')"`:'style="cursor:default"'}>
+        <div class="task-card-name">${t.name}</div>
+        ${taskBadge(t) ? `<div style="margin-bottom:4px">${taskBadge(t)}</div>` : ''}
+        <div class="task-card-meta">
+          <span style="color:${AREA_COLORS[t.area]};font-size:8px;font-weight:700">${(t.area||'').toUpperCase()}</span>
+          ${assignee?`<span style="color:var(--muted);font-size:8px">· ${assignee.name}${isMine?' (tú)':''}</span>`:''}
+          ${t.hoursEst?`<span style="color:var(--muted);font-size:8px">· ${fmtN(t.hoursEst)}h</span>`:''}
+          ${ms?`<span style="font-family:'Space Mono',monospace;font-size:7px;color:var(--orange)">🎯 ${ms.name}</span>`:''}
+        </div>
+        ${isMine && s!=='done' ? `<div style="margin-top:5px"><button class="btn btn-ghost btn-sm" style="font-size:7px;padding:2px 7px" onclick="event.stopPropagation();cycleStatus('${t.id}','${s}')">→ ${s==='backlog'?'WIP':s==='wip'?'REVIEW':'DONE'}</button></div>`:''}
+      </div>`;
+    }).join('')||`<div style="color:var(--muted);font-size:9px;text-align:center;padding:16px">Vacío</div>`;
+  });
+}
+
+// ── RENDER AREA HOURS ─────────────────────────────────────
+function renderAreaHours() {
+  const panel = sel('area-hours-panel'); if(!panel) return;
+  const areas = {};
+  tasks.forEach(t=>{
+    if(!areas[t.area]) areas[t.area]={est:0,real:0,tasks:0,done:0};
+    areas[t.area].est   += t.hoursEst||0;
+    areas[t.area].real  += t.hoursReal||0;
+    areas[t.area].tasks++;
+    if(t.status==='done') areas[t.area].done++;
+  });
+  const maxH = Math.max(...Object.values(areas).map(a=>a.est), 1);
+  panel.innerHTML = Object.entries(areas).map(([area,data])=>`
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:10px;color:${AREA_COLORS[area]||'#888'}">${area.toUpperCase()}</span>
+        <div style="display:flex;gap:6px;align-items:center">
+          <span style="font-size:9px;color:var(--muted)">${data.done}/${data.tasks} tareas</span>
+          <span style="font-size:11px;font-weight:600;color:var(--gold)">${fmtN(data.est)}h</span>
+        </div>
+      </div>
+      <div class="prog-track" style="height:10px"><div class="prog-fill" style="width:${data.est/maxH*100}%;background:${AREA_COLORS[area]||'#888'}"></div></div>
+      ${data.real?`<div style="font-size:8px;color:${data.real>data.est?'var(--red)':'var(--muted)'};margin-top:2px">${fmtN(data.real)}h reales ${data.real>data.est?'▲ SOBRE EST.':''}</div>`:''}
+    </div>
+  `).join('') || '<div style="color:var(--muted);font-size:10px">Sin tareas asignadas</div>';
+}
+
+// ── MODALS ────────────────────────────────────────────────
+window.openModal = function(type, id=null) {
+  if(type==='perfil') {
+    renderMyRoles();
+    sel('pin-current').value=''; sel('pin-new').value=''; sel('pin-msg').textContent='';
+    sel('modal-perfil').classList.add('open'); return;
+  }
+  if(type==='admin') {
+    renderAdminUsers();
+    adminTab('users');
+    sel('au-name').value=''; sel('au-pin').value=''; sel('au-msg').textContent='';
+    cancelSprintEdit();
+    sel('modal-admin').classList.add('open'); return;
+  }
+  if(type==='task') {
+    // Populate users as assignees
+    sel('task-role').innerHTML = '<option value="">Sin asignar</option>' + users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
+    // Populate sprints
+    sel('task-sprint').innerHTML = '<option value="">Sin sprint (backlog)</option>' + sprints.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+    // Populate milestones
+    sel('task-milestone').innerHTML = '<option value="">Sin milestone</option>' + milestones.map(m=>`<option value="${m.id}">${m.name}</option>`).join('');
+    const isEdit = !!id;
+    sel('task-modal-title').textContent = isEdit ? 'EDITAR TAREA' : 'AÑADIR TAREA';
+    sel('task-edit-id').value = id||'';
+    sel('btn-del-task').style.display = isEdit && ME.isAdmin ? '' : 'none';
+    if(isEdit) {
+      const t = tasks.find(x=>x.id===id); if(!t) return;
+      sv('task-name',t.name); sv('task-area',t.area); sv('task-role',t.assignee||'');
+      sv('task-sprint',t.sprintId||''); sv('task-milestone',t.milestoneId||'');
+      sv('task-status',t.status||'backlog');
+      sv('task-hours-est',t.hoursEst||0); sv('task-hours-real',t.hoursReal||0); sv('task-notes',t.notes||'');
+    } else {
+      ['task-name','task-notes'].forEach(i=>sv(i,''));
+      sv('task-area','produccion'); sv('task-role','');
+      sv('task-sprint', activeSprint()?.id||'');
+      sv('task-milestone',''); sv('task-status','backlog');
+      sv('task-hours-est',''); sv('task-hours-real','');
+    }
+    sel('modal-task').classList.add('open');
+  }
+};
+window.closeModal = function(type) {
+  sel('modal-'+type)?.classList.remove('open');
+};
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
+
+// ── TASK CRUD ─────────────────────────────────────────────
+window.saveTask = async function() {
+  const id  = gv('task-edit-id');
+  const obj = {
+    name:        gv('task-name'),
+    area:        gv('task-area'),
+    assignee:    gv('task-role')||null,
+    sprintId:    gv('task-sprint')||null,
+    milestoneId: gv('task-milestone')||null,
+    status:      gv('task-status')||'backlog',
+    hoursEst:    +gv('task-hours-est')||0,
+    hoursReal:   +gv('task-hours-real')||0,
+    notes:       gv('task-notes')
+  };
+  if(!obj.name) { toast('El nombre es obligatorio',true); return; }
+  try {
+    if(id) { await updateDoc(ref('tasks',id), obj); }
+    else   { await addDoc(col('tasks'), {...obj, createdAt:new Date().toISOString(), createdBy:ME.id}); }
+    closeModal('task'); toast('✓ Tarea guardada');
+  } catch(e) { toast('Error: '+e.message, true); }
+};
+window.deleteTask = async function(id) {
+  const t = tasks.find(x=>x.id===id);
+  if(!t||!confirm(`¿Eliminar tarea "${t.name}"?`)) return;
+  try { await deleteDoc(ref('tasks',id)); closeModal('task'); toast('✓ Tarea eliminada'); }
+  catch(e) { toast('Error: '+e.message, true); }
+};
+</script>
+</body>
+</html>
