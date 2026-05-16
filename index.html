@@ -23,6 +23,12 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:var(--gold);border-radius:2px}
 .screen{display:none;min-height:100vh}.screen.on{display:flex}
 
+/* LOADING */
+#s-loading{background:var(--dark);align-items:center;justify-content:center;flex-direction:column;gap:16px}
+.spinner{width:32px;height:32px;border:3px solid rgba(201,164,40,.2);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-txt{font-family:'Space Mono',monospace;font-size:10px;color:rgba(237,232,223,.3);letter-spacing:2px}
+
 /* WHO */
 #s-who{background:var(--dark);align-items:center;justify-content:center;flex-direction:column}
 .who-logo{font-family:'Bangers',cursive;font-size:52px;letter-spacing:4px;color:var(--gold-l);animation:float 3s ease-in-out infinite}
@@ -34,8 +40,7 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .who-av{width:40px;height:40px;border-radius:50%;background:var(--gold-d);border:1px solid rgba(201,164,40,.3);display:flex;align-items:center;justify-content:center;font-family:'Bangers',cursive;font-size:18px;color:var(--gold-l);margin:0 auto 8px}
 .who-name{font-size:12px;font-weight:600;color:rgba(237,232,223,.8)}
 .who-role{font-family:'Space Mono',monospace;font-size:8px;color:rgba(237,232,223,.3);letter-spacing:1px;margin-top:2px}
-.who-add{background:transparent;border:1px dashed rgba(255,255,255,.12);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s;text-align:center;color:rgba(237,232,223,.25);font-family:'Space Mono',monospace;font-size:9px;letter-spacing:1px}
-.who-add:hover{border-color:rgba(201,164,40,.3);color:var(--gold)}
+.who-empty{text-align:center;padding:32px 20px;color:rgba(237,232,223,.3);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px}
 
 /* PIN */
 #s-pin{background:var(--dark);align-items:center;justify-content:center;flex-direction:column}
@@ -92,20 +97,20 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .kcard-who{font-family:'Space Mono',monospace;font-size:8px;padding:2px 6px;background:rgba(0,0,0,.05);border-radius:4px;color:var(--muted);margin-top:4px;display:inline-block}
 .kcard-btns{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
 
-/* MY SPRINT BOTTOM */
+/* MY SPRINT */
 .sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .sp-col{display:flex;flex-direction:column;gap:12px}
 
 /* HOURS CARD */
 .hcard{background:var(--dark);border-radius:12px;padding:18px 20px;border:1px solid rgba(201,164,40,.15)}
-.hc-eyebrow{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(237,232,223,.3);margin-bottom:10px}
+.hc-eye{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(237,232,223,.3);margin-bottom:10px}
 .hc-big{font-family:'Bangers',cursive;font-size:48px;letter-spacing:1px;line-height:1;color:var(--gold-l)}
 .hc-unit{font-family:'Space Mono',monospace;font-size:11px;color:rgba(237,232,223,.3);letter-spacing:1px;margin-left:4px}
 .hc-note{font-family:'Space Mono',monospace;font-size:9px;color:rgba(237,232,223,.3);margin:4px 0 12px}
-.hc-earn-row{display:flex;align-items:center;justify-content:space-between;background:rgba(201,164,40,.08);border:1px solid rgba(201,164,40,.15);border-radius:8px;padding:8px 12px}
+.hc-earn{display:flex;align-items:center;justify-content:space-between;background:rgba(201,164,40,.08);border:1px solid rgba(201,164,40,.15);border-radius:8px;padding:8px 12px}
 .hc-earn-lbl{font-family:'Space Mono',monospace;font-size:8px;color:rgba(237,232,223,.35);letter-spacing:1px}
 .hc-earn-val{font-family:'Bangers',cursive;font-size:22px;letter-spacing:1px}
-.hc-validated-row{margin-top:8px;background:rgba(58,144,80,.1);border:1px solid rgba(58,144,80,.2);border-radius:8px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:9px;color:rgba(58,144,80,.9);line-height:1.7}
+.hc-val-row{margin-top:8px;background:rgba(58,144,80,.1);border:1px solid rgba(58,144,80,.2);border-radius:8px;padding:8px 12px;font-family:'Space Mono',monospace;font-size:9px;color:rgba(58,144,80,.9);line-height:1.7}
 
 /* TASKS CARD */
 .tcard{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
@@ -125,8 +130,6 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .task-name{font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .done .task-name{text-decoration:line-through;color:var(--muted)}
 .task-sub{display:flex;align-items:center;gap:5px;margin-top:2px;flex-wrap:wrap}
-.task-area-lbl{font-family:'Space Mono',monospace;font-size:7px;font-weight:700}
-.task-h{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)}
 .task-btns{display:flex;gap:3px;flex-shrink:0}
 
 /* DONE BANNER */
@@ -138,14 +141,14 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .db-earn-val{font-family:'Bangers',cursive;font-size:26px;letter-spacing:1px;color:var(--green)}
 .db-earn-lbl{font-family:'Space Mono',monospace;font-size:8px;color:rgba(58,144,80,.5);letter-spacing:1px}
 
-/* COSTS PANEL */
+/* COSTS */
 .ccard{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
 .ccard-hdr{display:flex;align-items:center;padding:8px 14px;background:var(--dark);border-bottom:1px solid rgba(255,255,255,.06);gap:8px}
 .ccard-ttl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(237,232,223,.5)}
 .ccard-body{padding:14px}
 .cs{display:flex;align-items:baseline;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--borders)}
 .cs:last-child{border-bottom:none}
-.cs-lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:.5px}
+.cs-lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)}
 .cs-val{font-family:'Bangers',cursive;font-size:20px;letter-spacing:1px}
 .cs-total{margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;align-items:baseline;justify-content:space-between}
 .cs-total-lbl{font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
@@ -158,11 +161,10 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .bwrap-ttl{font-family:'Bangers',cursive;font-size:18px;letter-spacing:1px;color:var(--gold);margin-bottom:2px}
 .bwrap-sub{font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:.5px;margin-bottom:10px}
 .bonus-add{display:flex;gap:6px;margin-bottom:8px}
-.bonus-add-name{flex:1;background:var(--card2);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 10px;border-radius:8px;outline:none;transition:border-color .15s}
+.bonus-add-name{flex:1;background:var(--card2);border:1px solid var(--border);color:var(--text);font-family:'DM Sans',sans-serif;font-size:12px;padding:6px 10px;border-radius:8px;outline:none}
 .bonus-add-name:focus{border-color:var(--gold)}
 .bonus-add-h{width:70px;background:var(--card2);border:1px solid var(--border);color:var(--text);font-family:'Space Mono',monospace;font-size:11px;padding:6px 8px;border-radius:8px;outline:none;text-align:center;-moz-appearance:textfield}
 .bonus-add-h::-webkit-inner-spin-button{-webkit-appearance:none}
-.bonus-add-h:focus{border-color:var(--gold)}
 .bitem{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--borders)}
 .bitem:last-child{border-bottom:none}
 .bchk{width:18px;height:18px;border-radius:4px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;font-size:9px;transition:all .15s}
@@ -178,7 +180,6 @@ body{background:var(--cream);color:var(--text);font-family:'DM Sans',sans-serif;
 .tg-r{background:var(--red-b);color:var(--red);border-color:rgba(200,48,48,.2)}
 .tg-a{background:var(--amber-b);color:var(--amber);border-color:rgba(184,120,32,.2)}
 .tg-b{background:var(--blue-b);color:var(--blue);border-color:rgba(40,96,187,.2)}
-.tg-p{background:var(--purple-b);color:var(--purple);border-color:rgba(112,64,168,.2)}
 .tg-x{background:rgba(0,0,0,.04);color:var(--muted);border-color:var(--border)}
 .tg-gold{background:var(--gold-d);color:var(--amber);border-color:rgba(201,164,40,.25)}
 
@@ -236,7 +237,7 @@ select.finp{cursor:pointer}
 /* UTIL */
 .gold{color:var(--gold)!important}.green{color:var(--green)!important}.red{color:var(--red)!important}
 .muted{color:var(--muted)!important}.text{color:var(--text)!important}.bold{font-weight:700}
-.mono{font-family:'Space Mono',monospace}.bang{font-family:'Bangers',cursive;letter-spacing:1px}
+.mono{font-family:'Space Mono',monospace}
 .empty{text-align:center;padding:24px;color:var(--muted);font-family:'Space Mono',monospace;font-size:10px;letter-spacing:1px}
 .cdot{width:6px;height:6px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
@@ -247,8 +248,14 @@ select.finp{cursor:pointer}
 </head>
 <body>
 
+<!-- LOADING -->
+<div class="screen on" id="s-loading">
+  <div class="spinner"></div>
+  <div class="loading-txt">CONECTANDO A FIREBASE…</div>
+</div>
+
 <!-- WHO -->
-<div class="screen on" id="s-who">
+<div class="screen" id="s-who">
   <div style="text-align:center;width:100%;padding:40px 20px">
     <div class="who-logo">🥔</div>
     <div class="who-sub">HOT POTATO · COMMAND CENTER</div>
@@ -282,7 +289,7 @@ select.finp{cursor:pointer}
   <div class="hdr">
     <div style="display:flex;align-items:center;gap:16px">
       <div class="hdr-logo">🥔 HP</div>
-      <div class="hdr-info" id="hdr-info">Sin sprint activo</div>
+      <div class="hdr-info" id="hdr-info">Cargando…</div>
     </div>
     <div class="hdr-r">
       <div class="hdr-chip"><div class="hdr-av" id="hdr-av">?</div><span class="hdr-uname" id="hdr-uname">—</span></div>
@@ -295,9 +302,7 @@ select.finp{cursor:pointer}
     <div class="tab" onclick="goTab('log')" id="tab-log" style="display:none">📋 Log</div>
   </div>
   <div class="page">
-
     <div id="pane-prod" class="pane on">
-      <!-- TOP: KANBAN -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted)">KANBAN · TODAS LAS TAREAS</div>
         <div style="display:flex;gap:8px;align-items:center">
@@ -306,23 +311,13 @@ select.finp{cursor:pointer}
         </div>
       </div>
       <div class="kanban-wrap"><div class="kanban" id="kanban"></div></div>
-
-      <!-- DIVIDER -->
-      <div class="divider">
-        <div class="divider-line"></div>
-        <div class="divider-lbl">MI SPRINT · HORAS Y COSTES</div>
-        <div class="divider-line"></div>
-      </div>
-
-      <!-- BOTTOM: MY SPRINT -->
+      <div class="divider"><div class="divider-line"></div><div class="divider-lbl">MI SPRINT · HORAS Y COSTES</div><div class="divider-line"></div></div>
       <div id="mysprint"></div>
     </div>
-
     <div id="pane-log" class="pane">
       <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden">
         <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;background:var(--dark);border-bottom:1px solid rgba(255,255,255,.06)">
           <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(237,232,223,.5)">REGISTRO DE CAMBIOS</span>
-          <button class="btn btn-ghost btn-sm" onclick="if(confirm('¿Limpiar log?')){S.log=[];save();renderLog()}">Limpiar</button>
         </div>
         <div style="padding:14px" id="log-body"></div>
       </div>
@@ -349,14 +344,10 @@ select.finp{cursor:pointer}
         <div class="frow"><label class="flbl">ASIGNADA A</label><select class="finp" id="t-assignee"><option value="">Sin asignar</option></select></div>
         <div class="frow"><label class="flbl">SPRINT</label><select class="finp" id="t-sprint"><option value="">Sin sprint</option></select></div>
         <div class="frow"><label class="flbl">PRIORIDAD</label>
-          <select class="finp" id="t-prio">
-            <option value="low">Baja</option><option value="med" selected>Media</option><option value="high">Alta</option><option value="blocker">🚨 Blocker</option>
-          </select>
+          <select class="finp" id="t-prio"><option value="low">Baja</option><option value="med" selected>Media</option><option value="high">Alta</option><option value="blocker">🚨 Blocker</option></select>
         </div>
         <div class="frow"><label class="flbl">STATUS</label>
-          <select class="finp" id="t-status">
-            <option value="backlog">Backlog</option><option value="wip">En Progreso</option><option value="review">Review</option><option value="done">Done</option>
-          </select>
+          <select class="finp" id="t-status"><option value="backlog">Backlog</option><option value="wip">En Progreso</option><option value="review">Review</option><option value="done">Done</option></select>
         </div>
         <div class="frow"><label class="flbl">H. ESTIMADAS</label><input type="number" class="finp" id="t-hest" min="0" step="0.5" placeholder="0"></div>
       </div>
@@ -378,17 +369,16 @@ select.finp{cursor:pointer}
       <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);line-height:1.9;background:var(--card2);border-radius:8px;padding:10px 12px;margin-bottom:16px">
         📌 Horas pactadas en reunión para este sprint.<br>
         ✅ Si completas todas tus tareas → mínimo 4h convalidadas.<br>
-        ⬆ Si tienes asignadas más horas, se cuentan esas.
+        ⬆ Si tienes más horas asignadas, se cuentan esas.
       </div>
       <input type="hidden" id="mh-sid">
       <div class="frow">
         <label class="flbl">HORAS PACTADAS</label>
         <input type="number" class="finp" id="mh-h" min="0" step="0.25" placeholder="Ej: 4"
-          style="font-size:28px;font-family:'Bangers',cursive;letter-spacing:1px;text-align:center"
-          oninput="previewH()">
+          style="font-size:28px;font-family:'Bangers',cursive;letter-spacing:1px;text-align:center" oninput="previewH()">
       </div>
       <div style="text-align:center;font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px">
-        Si completas → <span class="gold bang" id="mh-preview" style="font-size:18px">0€</span> · Tarifa <strong class="gold">9.50€/h</strong>
+        Si completas → <span class="gold" style="font-family:'Bangers',cursive;font-size:18px" id="mh-preview">0€</span> · Tarifa <strong class="gold">9.50€/h</strong>
       </div>
     </div>
     <div class="modal-foot">
@@ -400,32 +390,36 @@ select.finp{cursor:pointer}
 
 <!-- MODAL: ADMIN -->
 <div class="overlay" id="m-admin">
-  <div class="modal" style="width:640px">
-    <div class="modal-hdr"><div class="modal-ttl">⚙ ADMIN</div><span class="modal-x" onclick="closeM('admin')">✕</span></div>
+  <div class="modal" style="width:660px">
+    <div class="modal-hdr"><div class="modal-ttl">⚙ ADMIN · HOT POTATO</div><span class="modal-x" onclick="closeM('admin')">✕</span></div>
     <div class="modal-body">
       <div class="atabs">
         <div class="atab on" onclick="aTab('users')">👥 EQUIPO</div>
         <div class="atab" onclick="aTab('sprints')">🏃 SPRINTS</div>
         <div class="atab" onclick="aTab('hours')">⏱ HORAS</div>
       </div>
+
+      <!-- USERS TAB -->
       <div class="atab-pane on" id="ap-users">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-gold btn-sm" onclick="toggleF('uf')">+ AÑADIR MIEMBRO</button></div>
-        <div id="uf" style="display:none;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">
+        <!-- ADD MEMBER FORM — always visible -->
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+          <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">AÑADIR MIEMBRO</div>
           <div class="fg3">
             <div class="frow"><label class="flbl">NOMBRE</label><input type="text" class="finp" id="au-name" placeholder="Ej: Marco"></div>
-            <div class="frow"><label class="flbl">PIN (4 dígitos)</label><input type="text" class="finp" id="au-pin" maxlength="4" placeholder="0000"></div>
+            <div class="frow"><label class="flbl">PIN (4 dígitos)</label><input type="text" class="finp" id="au-pin" maxlength="4" placeholder="0000" inputmode="numeric"></div>
             <div class="frow"><label class="flbl">ROL</label><select class="finp" id="au-role"><option value="member">Miembro</option><option value="admin">Admin</option></select></div>
           </div>
-          <div style="display:flex;gap:8px;justify-content:flex-end">
-            <button class="btn btn-ghost btn-sm" onclick="toggleF('uf')">CANCELAR</button>
-            <button class="btn btn-gold btn-sm" onclick="addUser()">GUARDAR</button>
-          </div>
+          <button class="btn btn-gold btn-full" onclick="addUser()" style="margin-top:4px">✓ AÑADIR MIEMBRO AL EQUIPO</button>
+          <div id="au-msg" style="font-family:'Space Mono',monospace;font-size:9px;text-align:center;margin-top:8px;min-height:14px"></div>
         </div>
+        <!-- MEMBERS LIST -->
         <div id="users-list"></div>
       </div>
+
+      <!-- SPRINTS TAB -->
       <div class="atab-pane" id="ap-sprints">
-        <div style="display:flex;justify-content:flex-end;margin-bottom:10px"><button class="btn btn-gold btn-sm" onclick="toggleF('sf')">+ NUEVO SPRINT</button></div>
-        <div id="sf" style="display:none;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:12px">
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px">
+          <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px">NUEVO SPRINT</div>
           <div class="fg2">
             <div class="frow" style="grid-column:1/-1"><label class="flbl">NOMBRE *</label><input type="text" class="finp" id="sp-name" placeholder="Sprint 1 — Core Loop"></div>
             <div class="frow"><label class="flbl">INICIO</label><input type="date" class="finp" id="sp-start"></div>
@@ -433,13 +427,12 @@ select.finp{cursor:pointer}
             <div class="frow" style="grid-column:1/-1"><label class="flbl">OBJETIVO</label><input type="text" class="finp" id="sp-goal" placeholder="¿Qué tiene que estar listo?"></div>
           </div>
           <input type="hidden" id="sp-eid">
-          <div style="display:flex;gap:8px;justify-content:flex-end">
-            <button class="btn btn-ghost btn-sm" onclick="toggleF('sf')">CANCELAR</button>
-            <button class="btn btn-gold btn-sm" onclick="saveSprint()">GUARDAR</button>
-          </div>
+          <button class="btn btn-gold btn-full" onclick="saveSprint()" style="margin-top:4px">✓ GUARDAR SPRINT</button>
         </div>
         <div id="sprints-list"></div>
       </div>
+
+      <!-- HOURS TAB -->
       <div class="atab-pane" id="ap-hours">
         <div style="margin-bottom:12px"><select class="finp" id="ah-sp" onchange="renderAH()"><option value="">Selecciona sprint…</option></select></div>
         <div id="ah-tbl"></div>
@@ -448,35 +441,49 @@ select.finp{cursor:pointer}
   </div>
 </div>
 
+<!-- FIREBASE -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <script>
 'use strict';
-const RATE = 9.50, MIN_H = 4, KEY = 'hp_prod_v2';
-const AREA = {
-  prod:  { lbl:'Producción', color:'#2860BB' }, arte: { lbl:'Arte',      color:'#7040A8' },
-  audio: { lbl:'Audio',      color:'#2A9080' }, qa:   { lbl:'QA',        color:'#3A9050' },
-  diseno:{ lbl:'Diseño',     color:'#C9A428' }, mkt:  { lbl:'Marketing', color:'#B87820' },
+
+// ── FIREBASE CONFIG ──────────────────────────────────────
+firebase.initializeApp({
+  apiKey:            "AIzaSyAFvf31Iv5aj98MjSs_uiVQ2sR9fWW7MjI",
+  authDomain:        "hot-potato-cc.firebaseapp.com",
+  projectId:         "hot-potato-cc",
+  storageBucket:     "hot-potato-cc.firebasestorage.app",
+  messagingSenderId: "1022137605356",
+  appId:             "1:1022137605356:web:b52d3ba53887caf15659c9"
+});
+const db = firebase.firestore();
+
+// ── CONSTANTS ────────────────────────────────────────────
+const RATE  = 9.50;
+const MIN_H = 4;
+const AREA  = {
+  prod:  { lbl:'Producción', color:'#2860BB' },
+  arte:  { lbl:'Arte',       color:'#7040A8' },
+  audio: { lbl:'Audio',      color:'#2A9080' },
+  qa:    { lbl:'QA',         color:'#3A9050' },
+  diseno:{ lbl:'Diseño',     color:'#C9A428' },
+  mkt:   { lbl:'Marketing',  color:'#B87820' },
   otro:  { lbl:'Otro',       color:'#6B6560' },
 };
-const PRIO = { low:{c:'tg-x',l:'Baja'}, med:{c:'tg-a',l:'Media'}, high:{c:'tg-b',l:'Alta'}, blocker:{c:'tg-r',l:'Blocker 🚨'} };
+const PRIO = {
+  low:    { c:'tg-x', l:'Baja'      },
+  med:    { c:'tg-a', l:'Media'     },
+  high:   { c:'tg-b', l:'Alta'      },
+  blocker:{ c:'tg-r', l:'Blocker 🚨' },
+};
 
-let S = { users:[], sprints:[], tasks:[], hours:[], bonus:[], log:[] };
-let ME = null, pinBuf = '', pinTarget = null;
+// ── STATE (live from Firestore) ───────────────────────────
+let C = { users:[], sprints:[], tasks:[], hours:[], bonus:[], log:[] };
+let ME = null;
+let pinBuf = '', pinTarget = null;
+let unsubs = [];
 
-const save = () => {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(S));
-  } catch(e) {
-    console.error('Error guardando datos:', e);
-    alert('⚠️ No se pudo guardar. Abre el archivo con un servidor local o usa Chrome con --allow-file-access-from-files');
-  }
-}
-function load() {
-  try {
-    const d = localStorage.getItem(KEY);
-    if(d) S = { ...S, ...JSON.parse(d) };
-  } catch(e) { console.error('Error cargando datos:', e); }
-}
-const uid     = () => Math.random().toString(36).slice(2,9);
+// ── HELPERS ──────────────────────────────────────────────
 const fmt     = (n,d=0) => (+n||0).toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d})+'€';
 const fmtH    = n => (+n||0).toLocaleString('es-ES',{minimumFractionDigits:1,maximumFractionDigits:1})+'h';
 const gv      = id => { const e=document.getElementById(id); return e?e.value:''; };
@@ -485,130 +492,184 @@ const sel     = id => document.getElementById(id);
 const tag     = (t,c) => `<span class="tag ${c}">${t}</span>`;
 const dateStr = d => d ? new Date(d+'T12:00').toLocaleDateString('es-ES',{day:'2-digit',month:'short'}) : '—';
 const hashPin = p => { let h=0; for(let c of p) h=(Math.imul(31,h)+c.charCodeAt(0))|0; return Math.abs(h).toString(16); };
+
 function toast(msg, err=false) {
   const t=sel('toast'); t.textContent=msg; t.className='on'+(err?' err':'');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.className='', 3000);
-}
-function log(type, desc, old='', nw='') {
-  S.log.unshift({ id:uid(), ts:new Date().toISOString(), userName:ME?.name||'?', type, desc, old:String(old), nw:String(nw) });
-  if(S.log.length>400) S.log=S.log.slice(0,400);
+  clearTimeout(t._t); t._t=setTimeout(()=>t.className='',3000);
 }
 
-// Computed
-const activeSp    = () => S.sprints.find(s=>s.status==='active');
-const myTasks     = spId => S.tasks.filter(t=>t.assignee===ME.id && t.sprintId===spId);
-const myHours     = spId => S.hours.find(h=>h.userId===ME.id && h.sprintId===spId);
-const myBonus     = spId => S.bonus.filter(b=>b.userId===ME.id && b.sprintId===spId);
-const effH        = entry => entry ? Math.max(+entry.hours||0, MIN_H) : 0;
-function spComplete(uid, spId) {
-  const t = S.tasks.filter(x=>x.assignee===uid && x.sprintId===spId);
+async function addLog(type, desc, old='', nw='') {
+  try {
+    await db.collection('log').add({
+      ts: new Date().toISOString(),
+      userName: ME?.name||'Sistema',
+      type, desc,
+      old: String(old||''),
+      nw:  String(nw||'')
+    });
+  } catch(e){ console.error('Log error',e); }
+}
+
+// ── COMPUTED ─────────────────────────────────────────────
+const activeSp  = () => C.sprints.find(s=>s.status==='active');
+const myTasks   = spId => C.tasks.filter(t=>t.assignee===ME.id && t.sprintId===spId);
+const myHours   = spId => C.hours.find(h=>h.userId===ME.id && h.sprintId===spId);
+const myBonus   = spId => C.bonus.filter(b=>b.userId===ME.id && b.sprintId===spId);
+const effH      = e => e ? Math.max(+e.hours||0, MIN_H) : 0;
+
+function spComplete(userId, spId) {
+  const t = C.tasks.filter(x=>x.assignee===userId && x.sprintId===spId);
   return t.length>0 && t.every(x=>x.status==='done');
 }
-function totalEarnedAll(userId) {
-  const hEarned = S.hours.filter(h=>h.userId===userId&&h.validated).reduce((s,h)=>s+effH(h)*RATE, 0);
-  const bEarned = S.bonus.filter(b=>b.userId===userId&&b.done).reduce((s,b)=>s+(+b.hours||0)*RATE, 0);
-  return hEarned + bEarned;
+function totalEarned(userId) {
+  const hE = C.hours.filter(h=>h.userId===userId&&h.validated).reduce((s,h)=>s+effH(h)*RATE, 0);
+  const bE = C.bonus.filter(b=>b.userId===userId&&b.done).reduce((s,b)=>s+(+b.hours||0)*RATE, 0);
+  return hE+bE;
 }
 
-// Screens
-const showSc = id => { document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on')); sel(id).classList.add('on'); };
+// ── SCREENS ──────────────────────────────────────────────
+const showSc = id => {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  sel(id).classList.add('on');
+};
 
-// WHO
+// ── REAL-TIME LISTENERS ──────────────────────────────────
+function startListeners() {
+  unsubs.forEach(u=>u()); unsubs=[];
+
+  unsubs.push(db.collection('users').orderBy('name').onSnapshot(snap=>{
+    C.users = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  }));
+  unsubs.push(db.collection('sprints').orderBy('startDate','asc').onSnapshot(snap=>{
+    C.sprints = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  }));
+  unsubs.push(db.collection('tasks').onSnapshot(snap=>{
+    C.tasks = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  }));
+  unsubs.push(db.collection('hours').onSnapshot(snap=>{
+    C.hours = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  }));
+  unsubs.push(db.collection('bonus').onSnapshot(snap=>{
+    C.bonus = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAll();
+  }));
+  unsubs.push(db.collection('log').orderBy('ts','desc').limit(100).onSnapshot(snap=>{
+    C.log = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderLog();
+  }));
+}
+
+// ── WHO SCREEN ───────────────────────────────────────────
 function renderWho() {
   const g = sel('who-grid');
-  if(!S.users.length) {
-    g.innerHTML = `<div class="who-add" style="grid-column:1/-1;padding:28px" onclick="createAdmin()"><div style="font-size:28px;margin-bottom:8px">+</div><div>CREAR PRIMER USUARIO</div><div style="font-size:8px;opacity:.5;margin-top:4px">Serás el administrador</div></div>`;
+  if(!C.users.length) {
+    g.innerHTML = `<div class="who-empty" style="grid-column:1/-1">
+      <div style="font-size:32px;margin-bottom:12px">🔑</div>
+      <div style="margin-bottom:6px">Sin miembros aún</div>
+      <div style="font-size:9px;opacity:.6">El admin debe añadir miembros desde ⚙ Admin</div>
+    </div>`;
   } else {
-    g.innerHTML = S.users.map(u=>`
+    g.innerHTML = C.users.map(u=>`
       <div class="who-card" onclick="startPin('${u.id}')">
         <div class="who-av">${u.name[0].toUpperCase()}</div>
         <div class="who-name">${u.name}</div>
         <div class="who-role">${u.isAdmin?'ADMIN':'MIEMBRO'}</div>
-      </div>`).join('') + `<div class="who-add" onclick="addMemberWho()">+ añadir miembro</div>`;
+      </div>`).join('');
   }
   showSc('s-who');
 }
-function createAdmin() {
-  const name=prompt('Tu nombre (serás admin):'); if(!name?.trim()) return;
-  const pin=prompt('PIN de 4 dígitos:'); if(!pin||!/^\d{4}$/.test(pin)) { alert('PIN debe ser 4 dígitos'); return; }
-  const newUser = { id:uid(), name:name.trim(), pin:hashPin(pin), isAdmin:true };
-  S.users.push(newUser);
-  ME = { ...newUser };
-  // Save session so it persists on reload
-  try { localStorage.setItem('hp_session', JSON.stringify({id:ME.id})); } catch(e){}
-  log('USUARIO','Admin creado: '+name.trim(),'','admin');
-  save();
-  // Enter app directly — no need to re-enter PIN
-  enterApp();
-}
-function addMemberWho() {
-  const aN=prompt('Nombre del admin:');
-  const a=S.users.find(u=>u.isAdmin&&u.name.toLowerCase()===aN?.toLowerCase().trim());
-  if(!a) { toast('Solo un admin puede añadir miembros', true); return; }
-  const aP=prompt('PIN del admin:');
-  if(hashPin(aP||'')!==a.pin) { toast('PIN incorrecto', true); return; }
-  const n=prompt('Nombre del nuevo miembro:'); if(!n?.trim()) return;
-  const p=prompt('PIN del nuevo miembro (4 dígitos):'); if(!p||!/^\d{4}$/.test(p)) { alert('4 dígitos'); return; }
-  if(S.users.find(u=>u.name.toLowerCase()===n.toLowerCase().trim())) { toast('Ese nombre ya existe', true); return; }
-  S.users.push({ id:uid(), name:n.trim(), pin:hashPin(p), isAdmin:false });
-  log('USUARIO','Miembro añadido: '+n.trim(),'','member');
-  save(); renderWho(); toast('✓ Miembro añadido');
-}
 
-// PIN
+// ── PIN ───────────────────────────────────────────────────
 function startPin(userId) {
-  pinTarget=S.users.find(u=>u.id===userId); if(!pinTarget) return;
-  pinBuf='';
-  sel('pin-av').textContent=pinTarget.name[0].toUpperCase();
-  sel('pin-name').textContent=pinTarget.name;
-  sel('pin-err').textContent='';
+  pinTarget = C.users.find(u=>u.id===userId); if(!pinTarget) return;
+  pinBuf = '';
+  sel('pin-av').textContent  = pinTarget.name[0].toUpperCase();
+  sel('pin-name').textContent= pinTarget.name;
+  sel('pin-err').textContent = '';
   dots(); showSc('s-pin');
 }
 const goWho = () => { showSc('s-who'); pinBuf=''; pinTarget=null; };
 const dots  = () => document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled',i<pinBuf.length));
 function pKey(k) { if(pinBuf.length>=4) return; pinBuf+=k; dots(); if(pinBuf.length===4) setTimeout(pEnter,120); }
-function pDel() { pinBuf=pinBuf.slice(0,-1); dots(); sel('pin-err').textContent=''; }
+function pDel()  { pinBuf=pinBuf.slice(0,-1); dots(); sel('pin-err').textContent=''; }
 function pEnter() {
   if(!pinTarget||pinBuf.length<4) return;
   if(hashPin(pinBuf)===pinTarget.pin) {
-    ME={...pinTarget}; localStorage.setItem('hp_session',JSON.stringify({id:ME.id})); enterApp();
-  } else { sel('pin-err').textContent='PIN incorrecto'; pinBuf=''; dots(); }
+    ME = {...pinTarget};
+    // Save session in localStorage (device-only, not critical data)
+    try { localStorage.setItem('hp_session', JSON.stringify({id:ME.id})); } catch(e){}
+    enterApp();
+  } else {
+    sel('pin-err').textContent='PIN incorrecto';
+    pinBuf=''; dots();
+  }
 }
 
-// APP
+// ── ENTER APP ────────────────────────────────────────────
 function enterApp() {
-  sel('hdr-av').textContent=ME.name[0].toUpperCase();
-  sel('hdr-uname').textContent=ME.name;
-  if(ME.isAdmin){ sel('btn-admin').style.display=''; sel('btn-new-task').style.display=''; sel('tab-log').style.display=''; }
-  showSc('s-app'); renderAll();
+  sel('hdr-av').textContent    = ME.name[0].toUpperCase();
+  sel('hdr-uname').textContent = ME.name;
+  if(ME.isAdmin) {
+    sel('btn-admin').style.display    = '';
+    sel('btn-new-task').style.display = '';
+    sel('tab-log').style.display      = '';
+  }
+  showSc('s-app');
+  startListeners();
 }
-function logout() { ME=null; pinBuf=''; pinTarget=null; localStorage.removeItem('hp_session'); renderWho(); }
 
+function logout() {
+  unsubs.forEach(u=>u()); unsubs=[];
+  ME=null; pinBuf=''; pinTarget=null;
+  C = { users:[], sprints:[], tasks:[], hours:[], bonus:[], log:[] };
+  try { localStorage.removeItem('hp_session'); } catch(e){}
+  // Restart listeners for who screen
+  db.collection('users').orderBy('name').onSnapshot(snap=>{
+    C.users = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderWho();
+  });
+}
+
+// ── RENDER ALL ───────────────────────────────────────────
 function renderAll() {
-  // Header sprint info
+  if(!ME) return;
   const sp=activeSp();
-  if(sp) { const t=S.tasks.filter(x=>x.sprintId===sp.id), d=t.filter(x=>x.status==='done').length; sel('hdr-info').innerHTML=`Sprint activo: <strong>${sp.name}</strong> · ${d}/${t.length} tareas`; }
-  else sel('hdr-info').innerHTML='Sin sprint activo';
-  renderKanban(); renderMySprint(); renderLog();
+  if(sp) {
+    const t=C.tasks.filter(x=>x.sprintId===sp.id), d=t.filter(x=>x.status==='done').length;
+    sel('hdr-info').innerHTML=`Sprint activo: <strong>${sp.name}</strong> · ${d}/${t.length} tareas`;
+  } else {
+    sel('hdr-info').innerHTML='Sin sprint activo';
+  }
+  renderKanban();
+  renderMySprint();
   if(sel('m-admin').classList.contains('on')) renderAdmin();
 }
 
-// KANBAN
+// ── KANBAN ───────────────────────────────────────────────
 function renderKanban() {
+  if(!ME) return;
   const f=gv('k-filter');
   const kf=sel('k-filter'), cur=kf.value;
-  kf.innerHTML='<option value="">Todos los sprints</option>'+S.sprints.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  kf.innerHTML='<option value="">Todos los sprints</option>'+C.sprints.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
   if(cur) kf.value=cur;
+
   const cols={backlog:[],wip:[],review:[],done:[]};
-  S.tasks.filter(t=>!f||t.sprintId===f)
+  C.tasks
+    .filter(t=>!f||t.sprintId===f)
     .sort((a,b)=>({blocker:0,high:1,med:2,low:3}[a.priority]||2)-({blocker:0,high:1,med:2,low:3}[b.priority]||2))
     .forEach(t=>{ if(cols[t.status]) cols[t.status].push(t); });
+
   const cols4=[
     {id:'backlog',lbl:'📋 Backlog',     color:'var(--muted)'},
     {id:'wip',    lbl:'🔧 En Progreso', color:'var(--blue)'},
     {id:'review', lbl:'👀 Review',      color:'var(--amber)'},
     {id:'done',   lbl:'✅ Done',        color:'var(--green)'},
   ];
+
   sel('kanban').innerHTML=cols4.map(col=>`
     <div class="kol">
       <div class="kol-hdr">
@@ -617,15 +678,17 @@ function renderKanban() {
       </div>
       <div class="kol-body">
         ${cols[col.id].map(t=>{
-          const who=S.users.find(u=>u.id===t.assignee);
+          const who=C.users.find(u=>u.id===t.assignee);
           const mine=t.assignee===ME.id;
           const can=mine||ME.isAdmin;
           const area=AREA[t.area]||AREA.otro;
           return `<div class="kcard${mine?' mine':''}${can?' click':''}" ${can?`onclick="openM('task','${t.id}')"`:''}>`+
             `<div class="kcard-name">${t.name}</div>`+
-            `<div class="kcard-meta"><span style="font-family:'Space Mono',monospace;font-size:7px;font-weight:700;color:${area.color}">${area.lbl.toUpperCase()}</span>`+
+            `<div class="kcard-meta">`+
+            `<span style="font-family:'Space Mono',monospace;font-size:7px;font-weight:700;color:${area.color}">${area.lbl.toUpperCase()}</span>`+
             `${tag(PRIO[t.priority]?.l||'Med',PRIO[t.priority]?.c||'tg-a')}`+
-            `${t.hEst?`<span style="font-family:'Space Mono',monospace;font-size:8px;color:var(--muted)">${fmtH(t.hEst)}</span>`:''}</div>`+
+            `${t.hEst?`<span style="font-family:'Space Mono',monospace;font-size:8px;color:var(--muted)">${fmtH(t.hEst)}</span>`:''}`+
+            `</div>`+
             `${who?`<div class="kcard-who">${who.name}${mine?' (tú)':''}</div>`:'<div class="kcard-who" style="color:var(--amber)">Sin asignar</div>'}`+
             `${can&&col.id!=='done'?`<div class="kcard-btns" onclick="event.stopPropagation()">`+
               `${col.id==='backlog'?`<button class="btn btn-ghost btn-xs" onclick="setS('${t.id}','wip')">→ WIP</button>`:''}`+
@@ -639,13 +702,19 @@ function renderKanban() {
     </div>`).join('');
 }
 
-// MY SPRINT
+// ── MY SPRINT ────────────────────────────────────────────
 function renderMySprint() {
+  if(!ME) return;
   const c=sel('mysprint'), sp=activeSp();
   if(!sp) {
-    c.innerHTML=`<div style="text-align:center;padding:40px;background:var(--card);border:1px solid var(--border);border-radius:12px"><div style="font-size:40px;margin-bottom:10px">🥔</div><div style="font-family:'Bangers',cursive;font-size:24px;letter-spacing:2px;color:var(--gold);margin-bottom:6px">SIN SPRINT ACTIVO</div><div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">${ME.isAdmin?'Crea y activa un sprint desde ⚙ Admin':'El admin activará el sprint en reunión'}</div></div>`;
+    c.innerHTML=`<div style="text-align:center;padding:40px;background:var(--card);border:1px solid var(--border);border-radius:12px">
+      <div style="font-size:40px;margin-bottom:10px">🥔</div>
+      <div style="font-family:'Bangers',cursive;font-size:24px;letter-spacing:2px;color:var(--gold);margin-bottom:6px">SIN SPRINT ACTIVO</div>
+      <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--muted)">${ME.isAdmin?'Crea y activa un sprint desde ⚙ Admin':'El admin activará el sprint en la próxima reunión'}</div>
+    </div>`;
     return;
   }
+
   const tasks   = myTasks(sp.id);
   const done    = tasks.filter(t=>t.status==='done').length;
   const total   = tasks.length;
@@ -659,10 +728,10 @@ function renderMySprint() {
   const bonDoneH= bonList.filter(b=>b.done).reduce((s,b)=>s+(+b.hours||0),0);
   const earnBase= val ? eH*RATE : 0;
   const earnBonus=bonDoneH*RATE;
-  const myTotal =totalEarnedAll(ME.id);
-  const projTotal=S.users.reduce((s,u)=>s+totalEarnedAll(u.id),0);
-  const myShare =projTotal>0 ? myTotal/projTotal*100 : 0;
-  const pctColor=pct===100?'var(--green)':pct>=50?'var(--gold)':'var(--blue)';
+  const myTot   = totalEarned(ME.id);
+  const projTot = C.users.reduce((s,u)=>s+totalEarned(u.id),0);
+  const myShare = projTot>0 ? myTot/projTot*100 : 0;
+  const pctColor= pct===100?'var(--green)':pct>=50?'var(--gold)':'var(--blue)';
 
   let h='';
 
@@ -681,39 +750,35 @@ function renderMySprint() {
 
   // Hours card
   h+=`<div class="hcard">
-    <div class="hc-eyebrow">MIS HORAS · ${sp.name}</div>
+    <div class="hc-eye">MIS HORAS · ${sp.name}</div>
     ${agrH>0?`
       <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:4px">
         <span class="hc-big">${fmtH(agrH)}</span><span class="hc-unit">PACTADAS</span>
       </div>
-      <div class="hc-note">${eH>agrH?`Mínimo ${MIN_H}h → se cuentan <strong style="color:var(--gold-l)">${fmtH(eH)}</strong> si completas`:`= ${fmt(agrH*RATE)} si completas`}</div>`
-    :`<div style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(237,232,223,.3);padding:6px 0 12px">Sin horas registradas</div>`}
-    <div class="hc-earn-row">
+      <div class="hc-note">${eH>agrH?`Mínimo ${MIN_H}h → se cuentan <strong style="color:var(--gold-l)">${fmtH(eH)}</strong> si completas`:`= ${fmt(agrH*RATE)} si completas`}</div>
+    `:`<div style="font-family:'Space Mono',monospace;font-size:10px;color:rgba(237,232,223,.3);padding:6px 0 12px">Sin horas registradas aún</div>`}
+    <div class="hc-earn">
       <div class="hc-earn-lbl">ESTA SEMANA</div>
       <div class="hc-earn-val" style="color:${val?'var(--green)':'var(--gold-l)'}">${val?fmt(earnBase):agrH>0?fmt(eH*RATE)+' est.':'—'}</div>
     </div>
-    ${val?`<div class="hc-validated-row">✅ ${fmtH(eH)} convalidadas · <strong>${fmt(earnBase)}</strong></div>`:''}
+    ${val?`<div class="hc-val-row">✅ ${fmtH(eH)} convalidadas · <strong>${fmt(earnBase)}</strong></div>`:''}
     ${!val?`<button class="btn btn-gold btn-sm btn-full" onclick="openM('hours','${sp.id}')">${agrH>0?'✏ EDITAR HORAS':'+ REGISTRAR HORAS'}</button>`:''}
   </div>`;
 
   // Tasks card
-  h+=`<div class="tcard">
-    <div class="tcard-hdr">
-      <span class="tcard-ttl">MIS TAREAS</span>
-      <span class="tcard-pct" style="color:${pctColor}">${pct}%</span>
-    </div>`;
+  h+=`<div class="tcard"><div class="tcard-hdr"><span class="tcard-ttl">MIS TAREAS</span><span class="tcard-pct" style="color:${pctColor}">${pct}%</span></div>`;
   if(total>0) {
     h+=`<div style="padding:6px 14px 0"><div class="pbar"><div class="pbar-fill" style="width:${pct}%;background:${pctColor}"></div></div></div>`;
     tasks.forEach(t=>{
-      const isDone=t.status==='done', isRev=t.status==='review', isWip=t.status==='wip';
+      const isDone=t.status==='done',isRev=t.status==='review',isWip=t.status==='wip';
       const area=AREA[t.area]||AREA.otro;
       h+=`<div class="task-row${isDone?' done':''}">
         <div class="chk ${isDone?'done':isRev?'review':isWip?'wip':''}" onclick="cycleTask('${t.id}')">${isDone?'✓':isRev?'👀':isWip?'●':''}</div>
         <div class="task-body">
           <div class="task-name">${t.name}</div>
           <div class="task-sub">
-            <span class="task-area-lbl" style="color:${area.color}">${area.lbl}</span>
-            ${t.hEst?`<span class="task-h">${fmtH(t.hEst)}</span>`:''}
+            <span style="font-family:'Space Mono',monospace;font-size:7px;font-weight:700;color:${area.color}">${area.lbl}</span>
+            ${t.hEst?`<span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">${fmtH(t.hEst)}</span>`:''}
             ${tag(PRIO[t.priority]?.l||'Med',PRIO[t.priority]?.c||'tg-a')}
           </div>
         </div>
@@ -730,18 +795,20 @@ function renderMySprint() {
   h+=`</div></div><div class="sp-col">`;
 
   // Costs panel
+  const myValH = C.hours.filter(h=>h.userId===ME.id&&h.validated).reduce((s,x)=>s+effH(x),0)
+               + C.bonus.filter(b=>b.userId===ME.id&&b.done).reduce((s,b)=>s+(+b.hours||0),0);
   h+=`<div class="ccard">
     <div class="ccard-hdr"><div class="cdot"></div><span class="ccard-ttl">COSTES POR HORA · PROYECTO</span></div>
     <div class="ccard-body">
-      <div class="cs"><span class="cs-lbl">MIS H VALIDADAS (TOTAL)</span><span class="cs-val gold">${fmtH(S.hours.filter(h=>h.userId===ME.id&&h.validated).reduce((s,x)=>s+effH(x),0)+S.bonus.filter(b=>b.userId===ME.id&&b.done).reduce((s,b)=>s+(+b.hours||0),0))}</span></div>
-      <div class="cs"><span class="cs-lbl">MI CONTRIBUCIÓN</span><span class="cs-val" style="color:var(--green)">${fmt(myTotal)}</span></div>
-      <div class="cs"><span class="cs-lbl">COSTE TOTAL EQUIPO</span><span class="cs-val" style="color:var(--blue)">${fmt(projTotal)}</span></div>
+      <div class="cs"><span class="cs-lbl">MIS H VALIDADAS (TOTAL)</span><span class="cs-val gold">${fmtH(myValH)}</span></div>
+      <div class="cs"><span class="cs-lbl">MI CONTRIBUCIÓN</span><span class="cs-val green">${fmt(myTot)}</span></div>
+      <div class="cs"><span class="cs-lbl">COSTE TOTAL EQUIPO</span><span class="cs-val" style="color:var(--blue)">${fmt(projTot)}</span></div>
       <div class="cs"><span class="cs-lbl">MI % DEL COSTE</span><span class="cs-val" style="color:var(--amber)">${myShare.toFixed(1)}%</span></div>
       <div style="margin-top:10px">
         <div style="display:flex;justify-content:space-between;font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);margin-bottom:4px"><span>Mi % del coste total</span><span>${myShare.toFixed(1)}%</span></div>
         <div class="pbar"><div class="pbar-fill" style="width:${Math.min(myShare,100)}%;background:var(--gold)"></div></div>
       </div>
-      <div class="cs-total"><span class="cs-total-lbl">MI TOTAL</span><span class="cs-total-val">${fmt(myTotal)}</span></div>
+      <div class="cs-total"><span class="cs-total-lbl">MI TOTAL</span><span class="cs-total-val">${fmt(myTot)}</span></div>
       <div style="font-family:'Space Mono',monospace;font-size:8px;color:var(--muted);margin-top:4px;text-align:right">Tarifa ${fmt(RATE,2)}/h · todos los sprints</div>
     </div>
   </div>`;
@@ -749,105 +816,113 @@ function renderMySprint() {
   // Bonus
   h+=`<div class="bwrap">
     <div class="bwrap-ttl">⭐ Bonus Tasks</div>
-    <div class="bwrap-sub">TAREAS EXTRA · HORAS SE CUENTAN TAL CUAL, SIN CONVALIDACIÓN</div>
+    <div class="bwrap-sub">TAREAS EXTRA · HORAS SE CUENTAN TAL CUAL</div>
     <div class="bonus-add">
       <input type="text" class="bonus-add-name" id="bon-name" placeholder="Nombre de la bonus task…">
       <input type="number" class="bonus-add-h" id="bon-h" min="0" step="0.25" placeholder="h" title="Horas">
       <button class="btn btn-gold btn-sm" onclick="addBonus('${sp.id}')">+</button>
     </div>`;
   if(bonList.length) {
-    bonList.forEach(b=>{ h+=`
+    bonList.forEach(b=>{h+=`
       <div class="bitem">
-        <div class="bchk${b.done?' done':''}" onclick="toggleBonus('${b.id}')">${b.done?'✓':''}</div>
+        <div class="bchk${b.done?' done':''}" onclick="toggleBonus('${b.id}','${!b.done}')">${b.done?'✓':''}</div>
         <div style="flex:1;min-width:0"><span class="bname" style="${b.done?'text-decoration:line-through;color:var(--muted)':''}">${b.name}</span></div>
         <span class="bh">${fmtH(b.hours)}</span>
         <span class="bearn" style="${!b.done?'opacity:.4':''}">+${fmt((+b.hours||0)*RATE)}</span>
         <button class="btn btn-red btn-xs" onclick="delBonus('${b.id}')">✕</button>
-      </div>`; });
+      </div>`;});
   } else h+=`<div class="empty" style="padding:10px">Sin bonus tasks — añade las que quieras</div>`;
   if(bonDoneH>0) h+=`<div style="margin-top:10px;padding-top:10px;border-top:1px solid rgba(201,164,40,.15);display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">BONUS COMPLETADO</span><span style="font-family:'Bangers',cursive;font-size:20px;color:var(--green)">+${fmt(earnBonus)}</span></div>`;
   h+=`</div></div></div>`;
-
   c.innerHTML=h;
 }
 
-// Task status
+// ── TASK STATUS ───────────────────────────────────────────
 function cycleTask(id) {
-  const t=S.tasks.find(x=>x.id===id); if(!t) return;
-  const c={backlog:'wip',wip:'review',review:'done',done:'wip'};
-  setS(id,c[t.status]||'wip');
+  const t=C.tasks.find(x=>x.id===id); if(!t) return;
+  const cycle={backlog:'wip',wip:'review',review:'done',done:'wip'};
+  setS(id, cycle[t.status]||'wip');
 }
-function setS(id, status) {
-  const t=S.tasks.find(x=>x.id===id); if(!t) return;
-  const old=t.status; t.status=status;
-  log('TAREA',`"${t.name}": ${old} → ${status}`,old,status);
-  autoValidate(); save(); renderAll();
+async function setS(id, status) {
+  const t=C.tasks.find(x=>x.id===id); if(!t) return;
+  const old=t.status;
+  await db.collection('tasks').doc(id).update({status});
+  await addLog('TAREA',`"${t.name}": ${old} → ${status}`,old,status);
+  // Auto-validate hours if sprint complete
+  if(status==='done') await tryValidate(t.sprintId, t.assignee);
 }
-function autoValidate() {
-  const sp=activeSp(); if(!sp) return;
-  if(!spComplete(ME.id,sp.id)) return;
-  const e=myHours(sp.id);
-  if(e&&!e.validated&&e.hours>0) {
-    e.validated=true;
-    const h=effH(e);
-    log('HORAS',`Horas convalidadas · ${ME.name} · "${sp.name}"`, 'pendiente', `${fmtH(h)} = ${fmt(h*RATE)}`);
-    toast(`🎉 Sprint completado! ${fmtH(h)} convalidadas → ${fmt(h*RATE)}`);
-  } else if(e&&!e.validated) {
-    toast('✅ Sprint completado — registra tus horas para convalidarlas');
-  }
+async function tryValidate(spId, userId) {
+  if(!userId) return;
+  if(!spComplete(userId, spId)) return;
+  const entry = C.hours.find(h=>h.userId===userId&&h.sprintId===spId&&!h.validated);
+  if(!entry || !entry.hours) return;
+  await db.collection('hours').doc(entry.id).update({validated:true});
+  const h=effH(entry);
+  const name=C.users.find(u=>u.id===userId)?.name||userId;
+  await addLog('HORAS',`Horas convalidadas · ${name}`, 'pendiente', `${fmtH(h)} = ${fmt(h*RATE)}`);
+  if(userId===ME.id) toast(`🎉 Sprint completado! ${fmtH(h)} convalidadas → ${fmt(h*RATE)}`);
 }
 
-// Hours modal
+// ── HOURS ────────────────────────────────────────────────
 function previewH() {
   const h=+gv('mh-h')||0, e=Math.max(h,MIN_H);
   sel('mh-preview').textContent=fmt(e*RATE)+(e>h?` (mín ${MIN_H}h)`:'');
 }
-function saveHours() {
+async function saveHours() {
   const spId=gv('mh-sid'), h=+gv('mh-h')||0;
   if(h<=0) { toast('Introduce tus horas', true); return; }
-  const idx=S.hours.findIndex(x=>x.userId===ME.id&&x.sprintId===spId);
-  if(idx>=0) { const old=S.hours[idx].hours; S.hours[idx].hours=h; log('HORAS',`${ME.name} actualizó horas`,fmtH(old),fmtH(h)); }
-  else { S.hours.push({id:uid(),userId:ME.id,sprintId:spId,hours:h,validated:false}); log('HORAS',`${ME.name} registró ${fmtH(h)}`,'',fmtH(h)); }
-  autoValidate(); save(); closeM('hours'); renderAll();
+  const existing=C.hours.find(x=>x.userId===ME.id&&x.sprintId===spId);
+  if(existing) {
+    const old=existing.hours;
+    await db.collection('hours').doc(existing.id).update({hours:h});
+    await addLog('HORAS',`${ME.name} actualizó horas`,fmtH(old),fmtH(h));
+  } else {
+    await db.collection('hours').add({userId:ME.id,sprintId:spId,hours:h,validated:false});
+    await addLog('HORAS',`${ME.name} registró ${fmtH(h)}`,'',fmtH(h));
+  }
+  // Check if already complete
+  await tryValidate(spId, ME.id);
+  closeM('hours');
   toast(`✓ ${fmtH(h)} registradas · ${fmt(Math.max(h,MIN_H)*RATE)} si completas`);
 }
 
-// Bonus
-function addBonus(spId) {
+// ── BONUS ────────────────────────────────────────────────
+async function addBonus(spId) {
   const name=(sel('bon-name')?.value||'').trim(), h=+sel('bon-h')?.value||0;
   if(!name) { toast('Escribe el nombre', true); return; }
-  S.bonus.push({id:uid(),userId:ME.id,sprintId:spId,name,hours:h,done:false,ts:new Date().toISOString()});
-  log('BONUS',`${ME.name} añadió bonus: "${name}" (${fmtH(h)})`,'',fmtH(h));
-  save(); renderMySprint();
+  await db.collection('bonus').add({userId:ME.id,sprintId:spId,name,hours:h,done:false,ts:new Date().toISOString()});
+  await addLog('BONUS',`${ME.name} añadió bonus: "${name}" (${fmtH(h)})`,'',fmtH(h));
   if(sel('bon-name')){ sel('bon-name').value=''; sel('bon-h').value=''; }
+  toast('✓ Bonus task añadida');
 }
-function toggleBonus(id) {
-  const b=S.bonus.find(x=>x.id===id); if(!b) return;
-  b.done=!b.done;
-  log('BONUS',`${ME.name} marcó bonus "${b.name}" como ${b.done?'completada':'pendiente'}`);
-  save(); renderMySprint();
+async function toggleBonus(id, done) {
+  const d=done==='true';
+  await db.collection('bonus').doc(id).update({done:d});
 }
-function delBonus(id) {
-  const b=S.bonus.find(x=>x.id===id); if(!b||!confirm(`¿Eliminar "${b.name}"?`)) return;
-  S.bonus=S.bonus.filter(x=>x.id!==id); save(); renderMySprint();
+async function delBonus(id) {
+  const b=C.bonus.find(x=>x.id===id);
+  if(!b||!confirm(`¿Eliminar "${b.name}"?`)) return;
+  await db.collection('bonus').doc(id).delete();
 }
 
-// Task modal
+// ── TASK MODAL ───────────────────────────────────────────
 function openM(type, arg=null) {
   if(type==='hours') {
     sv('mh-sid',arg);
-    const e=S.hours.find(h=>h.userId===ME.id&&h.sprintId===arg);
+    const e=C.hours.find(h=>h.userId===ME.id&&h.sprintId===arg);
     sv('mh-h',e?.hours||''); previewH();
     sel('m-hours').classList.add('on'); return;
   }
   if(type==='task') {
     const sp=activeSp();
-    sel('t-assignee').innerHTML='<option value="">Sin asignar</option>'+S.users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
-    sel('t-sprint').innerHTML='<option value="">Sin sprint</option>'+S.sprints.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-    if(arg&&S.tasks.find(t=>t.id===arg)) {
-      const t=S.tasks.find(t=>t.id===arg);
+    sel('t-assignee').innerHTML='<option value="">Sin asignar</option>'+C.users.map(u=>`<option value="${u.id}">${u.name}</option>`).join('');
+    sel('t-sprint').innerHTML='<option value="">Sin sprint</option>'+C.sprints.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+    if(arg && C.tasks.find(t=>t.id===arg)) {
+      const t=C.tasks.find(t=>t.id===arg);
       sel('m-task-ttl').textContent='EDITAR TAREA';
-      sv('t-id',t.id);sv('t-name',t.name);sv('t-area',t.area);sv('t-assignee',t.assignee||'');sv('t-sprint',t.sprintId||'');sv('t-prio',t.priority||'med');sv('t-status',t.status);sv('t-hest',t.hEst||0);sv('t-notes',t.notes||'');
+      sv('t-id',t.id);sv('t-name',t.name);sv('t-area',t.area);sv('t-assignee',t.assignee||'');
+      sv('t-sprint',t.sprintId||'');sv('t-prio',t.priority||'med');sv('t-status',t.status);
+      sv('t-hest',t.hEst||0);sv('t-notes',t.notes||'');
       sel('btn-del-task').style.display=ME.isAdmin?'':'none';
     } else {
       if(!ME.isAdmin) return;
@@ -859,48 +934,58 @@ function openM(type, arg=null) {
     }
     sel('m-task').classList.add('on'); return;
   }
-  if(type==='admin') { sel('m-admin').classList.add('on'); renderAdmin(); return; }
+  if(type==='admin') {
+    sel('m-admin').classList.add('on'); renderAdmin(); return;
+  }
 }
 const closeM = type => sel('m-'+type).classList.remove('on');
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('on'); }));
 
-function saveTask() {
+// ── TASK CRUD ────────────────────────────────────────────
+async function saveTask() {
   const id=gv('t-id'), isNew=!id;
   const obj={name:gv('t-name'),area:gv('t-area'),assignee:gv('t-assignee')||null,sprintId:gv('t-sprint')||null,priority:gv('t-prio')||'med',status:gv('t-status')||'backlog',hEst:+gv('t-hest')||0,notes:gv('t-notes')};
   if(!obj.name) { toast('Nombre obligatorio', true); return; }
-  if(isNew) { S.tasks.push({id:uid(),...obj}); log('TAREA',`Tarea creada: "${obj.name}"`,'',obj.status); }
-  else { const old=S.tasks.find(t=>t.id===id); if(old&&old.status!==obj.status) log('TAREA',`"${obj.name}": ${old.status}→${obj.status}`,old.status,obj.status); Object.assign(old,obj); }
-  save(); closeM('task'); renderAll(); toast('✓ Tarea guardada');
+  if(isNew) {
+    await db.collection('tasks').add({...obj,createdBy:ME.id,createdAt:new Date().toISOString()});
+    await addLog('TAREA',`Tarea creada: "${obj.name}"`,'',obj.status);
+  } else {
+    const old=C.tasks.find(t=>t.id===id);
+    await db.collection('tasks').doc(id).update(obj);
+    if(old&&old.status!==obj.status) await addLog('TAREA',`"${obj.name}": ${old.status}→${obj.status}`,old.status,obj.status);
+  }
+  closeM('task'); toast('✓ Tarea guardada');
 }
-function delTask() {
-  const id=gv('t-id'), t=S.tasks.find(x=>x.id===id);
+async function delTask() {
+  const id=gv('t-id'), t=C.tasks.find(x=>x.id===id);
   if(!t||!confirm(`¿Eliminar "${t.name}"?`)) return;
-  S.tasks=S.tasks.filter(x=>x.id!==id); log('TAREA',`Eliminada: "${t.name}"`,t.status,'');
-  save(); closeM('task'); renderAll(); toast('✓ Eliminada');
+  await db.collection('tasks').doc(id).delete();
+  await addLog('TAREA',`Eliminada: "${t.name}"`,t.status,'');
+  closeM('task'); toast('✓ Eliminada');
 }
 
-// Tabs
+// ── TABS ─────────────────────────────────────────────────
 function goTab(id) {
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
   sel('pane-'+id).classList.add('on');
-  ['prod','log'].indexOf(id) >= 0 && document.querySelectorAll('.tab')[['prod','log'].indexOf(id)]?.classList.add('on');
+  const map=['prod','log'];
+  document.querySelectorAll('.tab')[map.indexOf(id)]?.classList.add('on');
 }
 
-// Log
+// ── LOG ──────────────────────────────────────────────────
 function renderLog() {
   const el=sel('log-body'); if(!el) return;
   const TC={TAREA:'tg-p',SPRINT:'tg-a',HORAS:'tg-gold',BONUS:'tg-gold',USUARIO:'tg-b'};
-  if(!S.log.length) { el.innerHTML='<div class="empty">Sin entradas</div>'; return; }
-  el.innerHTML=S.log.map(l=>{
+  if(!C.log.length) { el.innerHTML='<div class="empty">Sin entradas</div>'; return; }
+  el.innerHTML=C.log.map(l=>{
     const d=new Date(l.ts);
     const ts=d.toLocaleDateString('es-ES',{day:'2-digit',month:'short'})+' '+d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
     return `<div class="log-row"><span class="log-ts">${ts}</span>${tag(l.type||'?',TC[l.type]||'tg-x')}<div class="log-body">${l.desc} <span style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted)">· ${l.userName}</span>${l.old&&l.nw?`<div class="log-diff"><span class="diff-old">${l.old}</span> → <span class="diff-nw">${l.nw}</span></div>`:''}</div></div>`;
   }).join('');
 }
 
-// Admin
-const toggleF = id => { const f=sel(id); f.style.display=f.style.display==='none'?'block':'none'; };
+// ── ADMIN ────────────────────────────────────────────────
 function aTab(id) {
   document.querySelectorAll('.atab').forEach(t=>t.classList.remove('on'));
   document.querySelectorAll('.atab-pane').forEach(p=>p.classList.remove('on'));
@@ -908,144 +993,197 @@ function aTab(id) {
   sel('ap-'+id).classList.add('on');
   if(id==='hours') renderAH();
 }
+
 function renderAdmin() {
-  // Users
-  sel('users-list').innerHTML=S.users.length?`<table class="tbl"><thead><tr><th>NOMBRE</th><th>ROL</th><th class="r">H VALIDADAS</th><th class="r">GANADO</th><th></th></tr></thead><tbody>${S.users.map(u=>{
-    const e=totalEarnedAll(u.id);
-    const hv=S.hours.filter(h=>h.userId===u.id&&h.validated).reduce((s,x)=>s+effH(x),0)+S.bonus.filter(b=>b.userId===u.id&&b.done).reduce((s,b)=>s+(+b.hours||0),0);
-    return `<tr><td class="text bold">${u.name}</td><td>${u.isAdmin?tag('Admin','tg-gold'):tag('Miembro','tg-x')}</td><td class="r mono">${fmtH(hv)}</td><td class="r mono green">${fmt(e)}</td><td class="r" style="white-space:nowrap"><button class="btn btn-ghost btn-xs" onclick="resetPin('${u.id}','${u.name}')">🔑 PIN</button>${u.id!==ME.id?`<button class="btn btn-red btn-xs" onclick="delUser('${u.id}','${u.name}')">🗑</button>`:''}</td></tr>`;
-  }).join('')}</tbody></table>`:'<div class="empty">Sin usuarios</div>';
-  // Sprints
-  sel('sprints-list').innerHTML=S.sprints.length?S.sprints.map(sp=>{
-    const t=S.tasks.filter(x=>x.sprintId===sp.id), d=t.filter(x=>x.status==='done').length;
+  // Users list
+  sel('users-list').innerHTML = C.users.length ? `
+    <table class="tbl">
+      <thead><tr><th>NOMBRE</th><th>ROL</th><th class="r">H VALIDADAS</th><th class="r">GANADO</th><th></th></tr></thead>
+      <tbody>${C.users.map(u=>{
+        const e=totalEarned(u.id);
+        const hv=C.hours.filter(h=>h.userId===u.id&&h.validated).reduce((s,x)=>s+effH(x),0)
+               + C.bonus.filter(b=>b.userId===u.id&&b.done).reduce((s,b)=>s+(+b.hours||0),0);
+        return `<tr>
+          <td class="text bold">${u.name}</td>
+          <td>${u.isAdmin?tag('Admin','tg-gold'):tag('Miembro','tg-x')}</td>
+          <td class="r mono">${fmtH(hv)}</td>
+          <td class="r mono green">${fmt(e)}</td>
+          <td class="r" style="white-space:nowrap">
+            <button class="btn btn-ghost btn-xs" onclick="resetPin('${u.id}','${u.name}')">🔑 PIN</button>
+            ${u.id!==ME.id?`<button class="btn btn-red btn-xs" onclick="delUser('${u.id}','${u.name}')">🗑</button>`:''}
+          </td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>` : '<div class="empty">Sin miembros todavía</div>';
+
+  // Sprints list
+  sel('sprints-list').innerHTML = C.sprints.length ? C.sprints.map(sp=>{
+    const t=C.tasks.filter(x=>x.sprintId===sp.id), d=t.filter(x=>x.status==='done').length;
     return `<div style="padding:10px 0;border-bottom:1px solid var(--borders);display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
-      <div><div class="bold text">${sp.name} ${tag(sp.status==='active'?'🏃 Activo':sp.status==='done'?'Completado':'Planificado',sp.status==='active'?'tg-a':sp.status==='done'?'tg-g':'tg-x')}</div>
-      <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px">${dateStr(sp.startDate)} → ${dateStr(sp.endDate)} · ${d}/${t.length} tareas</div>
-      ${sp.goal?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${sp.goal}</div>`:''}</div>
+      <div>
+        <div class="bold text">${sp.name} ${tag(sp.status==='active'?'🏃 Activo':sp.status==='done'?'Completado':'Planificado',sp.status==='active'?'tg-a':sp.status==='done'?'tg-g':'tg-x')}</div>
+        <div style="font-family:'Space Mono',monospace;font-size:9px;color:var(--muted);margin-top:2px">${dateStr(sp.startDate)} → ${dateStr(sp.endDate)} · ${d}/${t.length} tareas</div>
+        ${sp.goal?`<div style="font-size:11px;color:var(--muted);margin-top:2px">${sp.goal}</div>`:''}
+      </div>
       <div style="display:flex;gap:5px;flex-shrink:0">
         ${sp.status==='planned'?`<button class="btn btn-green btn-xs" onclick="activateSp('${sp.id}')">▶ ACTIVAR</button>`:''}
         ${sp.status==='active'?`<button class="btn btn-red btn-xs" onclick="closeSp('${sp.id}')">■ CERRAR</button>`:''}
         <button class="btn btn-ghost btn-xs" onclick="editSp('${sp.id}')">✏</button>
         ${sp.status==='planned'?`<button class="btn btn-red btn-xs" onclick="delSp('${sp.id}')">🗑</button>`:''}
-      </div></div>`;
-  }).join(''):'<div class="empty">Sin sprints</div>';
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty">Sin sprints — crea el primero arriba</div>';
+
   // Sprint select for hours tab
   const ah=sel('ah-sp'), cur=ah.value;
-  ah.innerHTML='<option value="">Selecciona sprint…</option>'+S.sprints.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
-  if(cur){ah.value=cur;renderAH();}
+  ah.innerHTML='<option value="">Selecciona sprint…</option>'+C.sprints.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+  if(cur){ ah.value=cur; renderAH(); }
 }
+
 function renderAH() {
   const spId=gv('ah-sp'), el=sel('ah-tbl');
   if(!spId) { el.innerHTML='<div class="empty">Selecciona un sprint</div>'; return; }
   let totH=0, totC=0;
   el.innerHTML=`<table class="tbl"><thead><tr><th>MIEMBRO</th><th class="r">PACTADAS</th><th class="r">EFECTIVAS</th><th>ESTADO</th><th class="r">TAREAS</th><th class="r">GANADO</th></tr></thead><tbody>`+
-  S.users.map(u=>{
-    const e=S.hours.find(h=>h.userId===u.id&&h.sprintId===spId);
+  C.users.map(u=>{
+    const e=C.hours.find(h=>h.userId===u.id&&h.sprintId===spId);
     const aH=+e?.hours||0, eH2=effH(e), v=e?.validated||false;
-    const t=S.tasks.filter(x=>x.assignee===u.id&&x.sprintId===spId);
+    const t=C.tasks.filter(x=>x.assignee===u.id&&x.sprintId===spId);
     const d=t.filter(x=>x.status==='done').length;
-    const bon=S.bonus.filter(b=>b.userId===u.id&&b.sprintId===spId&&b.done).reduce((s,b)=>s+(+b.hours||0),0);
+    const bon=C.bonus.filter(b=>b.userId===u.id&&b.sprintId===spId&&b.done).reduce((s,b)=>s+(+b.hours||0),0);
     const earn=(v?eH2*RATE:0)+bon*RATE;
     totH+=v?eH2+bon:0; totC+=earn;
-    return `<tr><td class="text bold">${u.name}</td><td class="r mono gold">${aH>0?fmtH(aH):'—'}</td>
-    <td class="r mono">${aH>0?fmtH(eH2)+''+( eH2>aH?` <span style="font-size:8px;color:var(--amber)">(mín)</span>`:''):'—'}</td>
-    <td>${v?tag('✅ Val.','tg-g'):aH>0?tag('⏳ Pend.','tg-a'):tag('Sin reg.','tg-x')}</td>
-    <td class="r mono">${d}/${t.length}${spComplete(u.id,spId)?' <span class="green">✓</span>':''}</td>
-    <td class="r mono ${earn>0?'green':''}">${earn>0?fmt(earn):'—'}</td></tr>`;
-  }).join('')+`</tbody><tfoot><tr class="tot"><td colspan="2">TOTAL</td><td class="r">${fmtH(totH)}</td><td></td><td></td><td class="r gold">${fmt(totC)}</td></tr></tfoot></table>`;
+    return `<tr>
+      <td class="text bold">${u.name}</td>
+      <td class="r mono gold">${aH>0?fmtH(aH):'—'}</td>
+      <td class="r mono">${aH>0?fmtH(eH2):' —'}${eH2>aH&&aH>0?' <span style="font-size:8px;color:var(--amber)">(mín)</span>':''}</td>
+      <td>${v?tag('✅ Val.','tg-g'):aH>0?tag('⏳ Pend.','tg-a'):tag('Sin reg.','tg-x')}</td>
+      <td class="r mono">${d}/${t.length}${spComplete(u.id,spId)?' <span class="green">✓</span>':''}</td>
+      <td class="r mono ${earn>0?'green':''}">${earn>0?fmt(earn):'—'}</td>
+    </tr>`;
+  }).join('')+
+  `</tbody><tfoot><tr class="tot"><td colspan="2">TOTAL</td><td class="r">${fmtH(totH)}</td><td></td><td></td><td class="r gold">${fmt(totC)}</td></tr></tfoot></table>`;
 }
 
-// Sprint CRUD
-function saveSprint() {
-  const eid=gv('sp-eid'), obj={name:gv('sp-name'),startDate:gv('sp-start'),endDate:gv('sp-end'),goal:gv('sp-goal')};
-  if(!obj.name) { toast('Nombre obligatorio', true); return; }
-  if(eid) { Object.assign(S.sprints.find(s=>s.id===eid),obj); log('SPRINT',`Editado: ${obj.name}`,'',''); }
-  else { S.sprints.push({id:uid(),...obj,status:'planned'}); log('SPRINT',`Creado: ${obj.name}`,'',`${obj.startDate}→${obj.endDate}`); }
-  save(); toggleF('sf'); renderAdmin(); renderAll(); toast('✓ Sprint guardado');
-}
-function editSp(id) {
-  const sp=S.sprints.find(s=>s.id===id); if(!sp) return;
-  sv('sp-eid',sp.id);sv('sp-name',sp.name);sv('sp-start',sp.startDate||'');sv('sp-end',sp.endDate||'');sv('sp-goal',sp.goal||'');
-  sel('sf').style.display='block';
-}
-function activateSp(id) {
-  const sp=S.sprints.find(s=>s.id===id); if(!sp||!confirm(`¿Activar "${sp.name}"?`)) return;
-  S.sprints.forEach(s=>{ if(s.status==='active') s.status='planned'; });
-  sp.status='active'; log('SPRINT',`Activado: ${sp.name}`,'planned','active');
-  save(); renderAdmin(); renderAll(); toast(`✓ "${sp.name}" activado`);
-}
-function closeSp(id) {
-  const sp=S.sprints.find(s=>s.id===id); if(!sp||!confirm(`¿Cerrar "${sp.name}"?`)) return;
-  sp.status='done'; log('SPRINT',`Cerrado: ${sp.name}`,'active','done');
-  save(); renderAdmin(); renderAll(); toast('✓ Sprint cerrado');
-}
-function delSp(id) {
-  const sp=S.sprints.find(s=>s.id===id); if(!sp||!confirm(`¿Eliminar "${sp.name}"?`)) return;
-  S.sprints=S.sprints.filter(s=>s.id!==id); log('SPRINT',`Eliminado: ${sp.name}`,sp.status,'');
-  save(); renderAdmin(); renderAll(); toast('✓ Eliminado');
-}
-
-// User CRUD
-function addUser() {
+// ── USER CRUD ────────────────────────────────────────────
+async function addUser() {
   const name=gv('au-name').trim(), pin=gv('au-pin').trim(), role=gv('au-role');
-  if(!name) { toast('Nombre obligatorio', true); return; }
-  if(!/^\d{4}$/.test(pin)) { toast('PIN debe ser 4 dígitos', true); return; }
-  if(S.users.find(u=>u.name.toLowerCase()===name.toLowerCase())) { toast('Ese nombre ya existe', true); return; }
-  S.users.push({id:uid(),name,pin:hashPin(pin),isAdmin:role==='admin'});
-  log('USUARIO',`Miembro añadido: ${name}`,'',role);
-  save(); toggleF('uf'); renderAdmin(); renderWho(); toast(`✓ ${name} añadido`);
+  const msg = sel('au-msg');
+  if(!name) { msg.style.color='var(--red)'; msg.textContent='El nombre es obligatorio'; return; }
+  if(!/^\d{4}$/.test(pin)) { msg.style.color='var(--red)'; msg.textContent='El PIN debe ser exactamente 4 dígitos'; return; }
+  if(C.users.find(u=>u.name.toLowerCase()===name.toLowerCase())) { msg.style.color='var(--red)'; msg.textContent='Ese nombre ya existe'; return; }
+  try {
+    msg.style.color='var(--muted)'; msg.textContent='Guardando en Firebase…';
+    await db.collection('users').add({ name, pin:hashPin(pin), isAdmin:role==='admin', createdAt:new Date().toISOString() });
+    await addLog('USUARIO',`Miembro añadido: ${name}`,'',role);
+    sv('au-name',''); sv('au-pin',''); sv('au-role','member');
+    msg.style.color='var(--green)'; msg.textContent=`✓ ${name} añadido correctamente`;
+    setTimeout(()=>msg.textContent='', 3000);
+    toast(`✓ ${name} añadido`);
+  } catch(e) {
+    msg.style.color='var(--red)'; msg.textContent='Error Firebase: '+e.message;
+    console.error(e);
+  }
 }
-function resetPin(userId, userName) {
+
+async function resetPin(userId, userName) {
   const np=prompt(`Nuevo PIN para ${userName} (4 dígitos):`);
   if(!np||!/^\d{4}$/.test(np)) { toast('PIN inválido', true); return; }
-  const u=S.users.find(x=>x.id===userId); if(!u) return;
-  u.pin=hashPin(np); log('USUARIO',`PIN reseteado: ${userName}`,'','');
-  save(); toast(`✓ PIN de ${userName} actualizado`);
-}
-function delUser(userId, userName) {
-  if(!confirm(`¿Eliminar a ${userName}?`)) return;
-  S.users=S.users.filter(u=>u.id!==userId);
-  S.hours=S.hours.filter(h=>h.userId!==userId);
-  S.bonus=S.bonus.filter(b=>b.userId!==userId);
-  log('USUARIO',`Eliminado: ${userName}`,'','');
-  save(); renderAdmin(); toast(`✓ ${userName} eliminado`);
+  await db.collection('users').doc(userId).update({pin:hashPin(np)});
+  await addLog('USUARIO',`PIN reseteado: ${userName}`,'','');
+  toast(`✓ PIN de ${userName} actualizado`);
 }
 
-// INIT
-// Test localStorage works
-try {
-  localStorage.setItem('hp_test', '1');
-  if(localStorage.getItem('hp_test') !== '1') throw new Error('read failed');
-  localStorage.removeItem('hp_test');
-} catch(e) {
-  document.body.innerHTML = `<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#1E1C18;font-family:'Space Mono',monospace;text-align:center;padding:20px">
-    <div>
-      <div style="font-size:48px;margin-bottom:16px">🥔</div>
-      <div style="color:#C9A428;font-size:14px;letter-spacing:2px;margin-bottom:12px">ERROR: localStorage no disponible</div>
-      <div style="color:rgba(237,232,223,.4);font-size:11px;line-height:2;max-width:400px">
-        Chrome bloquea localStorage en archivos locales.<br>
-        <strong style="color:rgba(237,232,223,.7)">Solución:</strong> abre el archivo desde un servidor local.<br><br>
-        Opción rápida en Terminal:<br>
-        <span style="background:rgba(255,255,255,.08);padding:4px 10px;border-radius:4px;color:#F0D060">npx serve .</span><br>
-        y luego abre <span style="color:#F0D060">localhost:3000</span> en el navegador
-      </div>
-    </div>
-  </div>`;
-  throw new Error('localStorage not available');
+async function delUser(userId, userName) {
+  if(!confirm(`¿Eliminar a ${userName}? Se borrarán sus horas y bonus.`)) return;
+  await db.collection('users').doc(userId).delete();
+  // Clean up their data
+  const hSnap=await db.collection('hours').where('userId','==',userId).get();
+  await Promise.all(hSnap.docs.map(d=>d.ref.delete()));
+  const bSnap=await db.collection('bonus').where('userId','==',userId).get();
+  await Promise.all(bSnap.docs.map(d=>d.ref.delete()));
+  await addLog('USUARIO',`Eliminado: ${userName}`,'','');
+  toast(`✓ ${userName} eliminado`);
 }
 
-load();
-const _s = localStorage.getItem('hp_session');
-if(_s) {
+// ── SPRINT CRUD ──────────────────────────────────────────
+async function saveSprint() {
+  const eid=gv('sp-eid');
+  const obj={name:gv('sp-name'),startDate:gv('sp-start'),endDate:gv('sp-end'),goal:gv('sp-goal')};
+  if(!obj.name) { toast('Nombre obligatorio', true); return; }
+  if(eid) {
+    await db.collection('sprints').doc(eid).update(obj);
+    await addLog('SPRINT',`Editado: ${obj.name}`,'','');
+  } else {
+    await db.collection('sprints').add({...obj,status:'planned',createdAt:new Date().toISOString()});
+    await addLog('SPRINT',`Creado: ${obj.name}`,'',`${obj.startDate}→${obj.endDate}`);
+  }
+  sv('sp-eid',''); sv('sp-name',''); sv('sp-start',''); sv('sp-end',''); sv('sp-goal','');
+  toast('✓ Sprint guardado');
+}
+
+function editSp(id) {
+  const sp=C.sprints.find(s=>s.id===id); if(!sp) return;
+  sv('sp-eid',sp.id);sv('sp-name',sp.name);sv('sp-start',sp.startDate||'');sv('sp-end',sp.endDate||'');sv('sp-goal',sp.goal||'');
+  aTab('sprints');
+}
+async function activateSp(id) {
+  const sp=C.sprints.find(s=>s.id===id); if(!sp||!confirm(`¿Activar "${sp.name}"?`)) return;
+  const active=C.sprints.find(s=>s.status==='active');
+  if(active) await db.collection('sprints').doc(active.id).update({status:'planned'});
+  await db.collection('sprints').doc(id).update({status:'active'});
+  await addLog('SPRINT',`Activado: ${sp.name}`,'planned','active');
+  toast(`✓ "${sp.name}" activado`);
+}
+async function closeSp(id) {
+  const sp=C.sprints.find(s=>s.id===id); if(!sp||!confirm(`¿Cerrar "${sp.name}"?`)) return;
+  await db.collection('sprints').doc(id).update({status:'done'});
+  await addLog('SPRINT',`Cerrado: ${sp.name}`,'active','done');
+  toast('✓ Sprint cerrado');
+}
+async function delSp(id) {
+  const sp=C.sprints.find(s=>s.id===id); if(!sp||!confirm(`¿Eliminar "${sp.name}"?`)) return;
+  await db.collection('sprints').doc(id).delete();
+  await addLog('SPRINT',`Eliminado: ${sp.name}`,sp.status,'');
+  toast('✓ Eliminado');
+}
+
+// ── INIT ─────────────────────────────────────────────────
+async function init() {
+  // Load users for the who screen first
   try {
-    const {id} = JSON.parse(_s);
-    const u = S.users.find(x=>x.id===id);
-    if(u) { ME=u; enterApp(); }
-    else renderWho();
-  } catch(e) { renderWho(); }
-} else {
+    const snap = await db.collection('users').orderBy('name').get();
+    C.users = snap.docs.map(d=>({id:d.id,...d.data()}));
+  } catch(e) {
+    // Show error if Firebase fails
+    sel('s-loading').innerHTML = `<div style="text-align:center;padding:20px">
+      <div style="font-size:40px;margin-bottom:16px">⚠️</div>
+      <div style="font-family:'Space Mono',monospace;font-size:10px;color:var(--red);letter-spacing:1px;margin-bottom:8px">ERROR DE CONEXIÓN</div>
+      <div style="font-family:'Space Mono',monospace;font-size:9px;color:rgba(237,232,223,.4);max-width:360px">${e.message}<br><br>Comprueba que Firestore está en modo prueba en la consola de Firebase</div>
+      <button onclick="location.reload()" style="margin-top:20px;font-family:'Space Mono',monospace;font-size:9px;padding:8px 18px;background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:8px;cursor:pointer;letter-spacing:1px">REINTENTAR</button>
+    </div>`;
+    return;
+  }
+
+  // Try to restore session (localStorage, best-effort)
+  try {
+    const sess = localStorage.getItem('hp_session');
+    if(sess) {
+      const {id} = JSON.parse(sess);
+      const u = C.users.find(x=>x.id===id);
+      if(u) { ME=u; enterApp(); return; }
+    }
+  } catch(e){}
+
   renderWho();
+  // Also start a live listener for who screen (new users appear in real-time)
+  db.collection('users').orderBy('name').onSnapshot(snap=>{
+    C.users = snap.docs.map(d=>({id:d.id,...d.data()}));
+    if(!ME) renderWho();
+  });
 }
+
+init();
 </script>
 </body>
 </html>
