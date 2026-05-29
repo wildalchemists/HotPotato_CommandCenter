@@ -2,53 +2,49 @@
 // Firestore security rules for HOT POTATO · COMMAND CENTER PRO
 // Paste into Firebase Console → Firestore Database → Rules → Publish.
 //
-// REQUIRES Firebase Authentication. Enable the Anonymous provider:
-//   Console → Authentication → Sign-in method → Anonymous → Enable.
-// The app calls signInAnonymously() on load, so every request carries a token.
+// REQUIRES the Google sign-in provider:
+//   Console → Authentication → Sign-in method → Google → Enable.
+// And the deploy domain authorised:
+//   Console → Authentication → Settings → Authorized domains →
+//   add  wildalchemists.github.io  (localhost is allowed by default).
 // ============================================================================
 //
-// PRIVACY NOTE
-// ------------
-// Gating on `request.auth != null` with the **Anonymous** provider means a
-// request must carry a Firebase token. That blocks unauthenticated/script
-// abuse, enables Firebase quota/abuse protection, and is the foundation for
-// per-user rules — BUT anyone can mint an anonymous token, so this is NOT full
-// privacy. To restrict to your team, switch the sign-in flow to Google or Email
-// link and gate by identity, e.g.:
+// PRIVATE ACCESS
+// --------------
+// Only the Google accounts listed in ok() can read or write. This is the REAL
+// security boundary. Keep the email list IDENTICAL to ALLOWED_EMAILS in
+// index.html (the in-app list only controls UX; this is what enforces access).
 //
-//   match /projects/{pid} {
-//     allow read, write: if request.auth != null
-//                        && request.auth.token.email in ['you@studio.com'];
-//   }
+// To add a teammate: add their lowercase Google email to BOTH lists.
 // ============================================================================
 
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // User roster: names readable for the login picker; credentials immutable.
-    match /users/{uid} {
-      allow read:   if true;
-      allow create: if request.auth != null
-                    && request.resource.data.keys().hasAll(['name','pin','salt'])
-                    && request.resource.data.name is string
-                    && request.resource.data.name.size() < 60
-                    && request.resource.data.pin is string
-                    && request.resource.data.salt is string;
-      allow update, delete: if false;
+    function ok() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+             'pmartinpenarojo@gmail.com'
+             // , 'teammate@studio.com'
+           ];
     }
 
-    // Project documents: one whole project's state each. Auth-gated + bounded.
+    // Project documents — one whole project's state each. Private + bounded.
     match /projects/{pid} {
-      allow read:  if request.auth != null;
-      allow write: if request.auth != null
+      allow read:  if ok();
+      allow write: if ok()
                    && (request.resource == null
                        || (request.resource.data.size() < 900000
                            && request.resource.data.project is map));
     }
 
     // Legacy data from the old Command Center — read-only, for the importer.
-    match /project/{id}       { allow read: if request.auth != null; allow write: if false; }
-    match /contributions/{id} { allow read: if request.auth != null; allow write: if false; }
+    match /project/{id}       { allow read: if ok(); allow write: if false; }
+    match /contributions/{id} { allow read: if ok(); allow write: if false; }
+
+    // Old PIN user roster — no longer used by the app.
+    match /users/{id} { allow read, write: if false; }
   }
 }

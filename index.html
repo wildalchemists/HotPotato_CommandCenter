@@ -544,39 +544,25 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--card
   <div class="loading-txt">CONECTANDO…</div>
 </div>
 
-<div class="screen" id="s-firstrun">
+<div class="screen" id="s-login">
   <div class="firstrun-card">
     <div style="font-size:48px;margin-bottom:14px">🥔</div>
-    <div style="font-family:var(--display);font-size:28px;letter-spacing:3px;color:var(--gold-l);margin-bottom:4px">PRIMER ACCESO</div>
-    <div style="font-family:var(--mono);font-size:9px;color:rgba(237,232,223,.3);letter-spacing:2px;margin-bottom:28px">CREA EL ADMIN DEL PROYECTO</div>
-    <label style="font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:rgba(237,232,223,.35);display:block;margin-bottom:6px;text-align:left">TU NOMBRE</label>
-    <input type="text" class="fr-input" id="fr-name" placeholder="Ej: Pilar" autocomplete="name">
-    <label style="font-family:var(--mono);font-size:8px;letter-spacing:1.5px;color:rgba(237,232,223,.35);display:block;margin-bottom:6px;text-align:left">PIN (4 DÍGITOS)</label>
-    <input type="password" class="fr-input fr-pin" id="fr-pin" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="new-password">
-    <button class="fr-btn" id="fr-create">CREAR ADMIN Y ENTRAR →</button>
-    <div id="fr-msg" style="font-family:var(--mono);font-size:9px;min-height:16px;margin-top:10px"></div>
+    <div style="font-family:var(--display);font-size:30px;letter-spacing:3px;color:var(--gold-l);margin-bottom:4px">HOT POTATO</div>
+    <div style="font-family:var(--mono);font-size:9px;color:rgba(237,232,223,.3);letter-spacing:2px;margin-bottom:28px">COMMAND CENTER · ACCESO PRIVADO</div>
+    <button class="fr-btn" id="btn-google" style="display:flex;align-items:center;justify-content:center;gap:10px;background:#fff;color:#1E1C18;">
+      <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#4285F4" d="M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z"/><path fill="#34A853" d="M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z"/><path fill="#FBBC05" d="M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34A21.99 21.99 0 0 0 2 24c0 3.55.85 6.91 2.34 9.88l7.35-5.7z"/><path fill="#EA4335" d="M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z"/></svg>
+      Entrar con Google
+    </button>
+    <div id="login-msg" style="font-family:var(--mono);font-size:9px;min-height:16px;margin-top:12px;color:var(--red)"></div>
   </div>
 </div>
 
-<div class="screen" id="s-who">
-  <div style="text-align:center;width:100%;">
-    <div class="who-logo">🥔</div>
-    <div class="who-sub">HOT POTATO · COMMAND CENTER</div>
-    <div class="who-grid" id="who-grid" style="margin:0 auto"></div>
-  </div>
-</div>
-
-<div class="screen" id="s-pin">
-  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%">
-    <div class="pin-back" id="pin-back">← Volver</div>
-    <div class="pin-av" id="pin-av">?</div>
-    <div class="pin-name" id="pin-name">—</div>
-    <div class="pin-hint">INTRODUCE TU PIN</div>
-    <div class="pin-dots" id="pin-dots">
-      <div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div><div class="pin-dot"></div>
-    </div>
-    <div class="pin-pad" id="pin-pad"></div>
-    <div class="pin-err" id="pin-err"></div>
+<div class="screen" id="s-denied">
+  <div class="firstrun-card">
+    <div style="font-size:48px;margin-bottom:14px">🚫</div>
+    <div style="font-family:var(--display);font-size:26px;letter-spacing:2px;color:var(--gold-l);margin-bottom:8px">SIN ACCESO</div>
+    <div style="font-family:var(--mono);font-size:9px;color:rgba(237,232,223,.45);letter-spacing:1px;margin-bottom:20px;line-height:1.8" id="denied-msg"></div>
+    <button class="fr-btn" id="btn-denied-logout" style="background:transparent;border:1px solid var(--gold);color:var(--gold)">Cambiar de cuenta</button>
   </div>
 </div>
 
@@ -1043,7 +1029,8 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getFirestore, collection, doc, addDoc, setDoc, updateDoc, deleteDoc,
          onSnapshot, getDoc, getDocs, query, orderBy }
        from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
-import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut }
+       from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 
 /* ── FIREBASE ──────────────────────────────────────────────
    NOTE: the apiKey being public is normal for Firebase web apps.
@@ -1085,35 +1072,29 @@ window.HP = window.HP || {};
 window.HP.printRules = () => console.log(FIRESTORE_RULES);
 const FIRESTORE_RULES = `// Firestore rules — paste in Firebase Console → Firestore → Rules → Publish.
 // Also saved next to this file as firestore.rules.
-// Requires Firebase Auth — enable the "Anonymous" provider:
-//   Console → Authentication → Sign-in method → Anonymous → Enable.
-// ── PRIVACY NOTE ───────────────────────────────────────────────────────────
-// "request.auth != null" with the Anonymous provider means a request must carry
-// a Firebase token — which blocks unauthenticated/script abuse and unlocks
-// per-user rules later, BUT anyone can mint an anonymous token, so this is NOT
-// full privacy. For that, switch to Google/Email sign-in and gate by email/uid,
-// e.g.: allow read, write: if request.auth.token.email in ['you@studio.com', ...];
+// Requires the GOOGLE provider: Console → Authentication → Sign-in method → Google.
+// ── PRIVATE ACCESS ─────────────────────────────────────────────────────────
+// Real gate: only the listed Google emails can read/write. Keep this list in
+// sync with ALLOWED_EMAILS in index.html.  ⬇ EDIT with your team's emails ⬇
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{uid} {
-      allow read: if true;                       // login picker needs names
-      allow create: if request.auth != null
-                    && request.resource.data.keys().hasAll(['name','pin','salt'])
-                    && request.resource.data.name is string
-                    && request.resource.data.name.size() < 60;
-      allow update, delete: if false;            // credentials immutable from client
+    function ok() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in ['pmartinpenarojo@gmail.com'];
     }
     match /projects/{pid} {
-      allow read:  if request.auth != null;
-      allow write: if request.auth != null
-                   && (request.resource == null   // deletes
+      allow read:  if ok();
+      allow write: if ok()
+                   && (request.resource == null
                        || (request.resource.data.size() < 900000
                            && request.resource.data.project is map));
     }
-    // legacy single-project doc (read-only, for the one-time importer)
-    match /project/{id}      { allow read: if request.auth != null; allow write: if false; }
-    match /contributions/{id}{ allow read: if request.auth != null; allow write: if false; }
+    // legacy docs (read-only, for the one-time importer)
+    match /project/{id}       { allow read: if ok(); allow write: if false; }
+    match /contributions/{id} { allow read: if ok(); allow write: if false; }
+    match /users/{id}         { allow read, write: if false; } // unused now
   }
 }`;
 
@@ -1129,102 +1110,48 @@ function newSalt(){
   return [...crypto.getRandomValues(new Uint8Array(8))].map(b=>b.toString(16).padStart(2,'0')).join('');
 }
 
-/* ── AUTH STATE ────────────────────────────────────────────*/
+/* ── AUTH (Google sign-in, restricted to an email allow-list) ──────────────
+   PRIVACY: the REAL gate is firestore.rules (request.auth.token.email in [...]).
+   This client list only controls UX — keep it identical to the rules list.
+   ⬇⬇⬇  EDIT THESE with your team's Google emails (lowercase)  ⬇⬇⬇ */
+const ALLOWED_EMAILS = ['pmartinpenarojo@gmail.com'];
+const ADMIN_EMAILS   = ['pmartinpenarojo@gmail.com'];
+/* ⬆⬆⬆ ----------------------------------------------------------- ⬆⬆⬆ */
+const provider = new GoogleAuthProvider();
 let ME = null;
-let authUsers = [];
-let pinBuf = '', pinTarget = null;
 
 function showScreen(id){
-  ['s-loading','s-firstrun','s-who','s-pin','s-app'].forEach(s=>{
-    const el = document.getElementById(s); if(!el) return;
+  ['s-loading','s-login','s-denied','s-app'].forEach(s=>{
+    const el=document.getElementById(s); if(!el) return;
     if(s==='s-app') el.classList.toggle('on', s===id);
-    else el.className = 'screen' + (s===id ? ' on' : '');
+    else el.className='screen'+(s===id?' on':'');
   });
 }
+const emailAllowed = email => ALLOWED_EMAILS.length===0 || ALLOWED_EMAILS.includes((email||'').toLowerCase());
 
-/* Build pin pad once */
-(function buildPad(){
-  const pad = document.getElementById('pin-pad');
-  const keys = ['1','2','3','4','5','6','7','8','9','del','0','go'];
-  pad.innerHTML = keys.map(k=>{
-    if(k==='del') return `<div class="pin-key del" data-k="del">⌫</div>`;
-    if(k==='go')  return `<div class="pin-key go" data-k="go">→</div>`;
-    return `<div class="pin-key" data-k="${k}">${k}</div>`;
-  }).join('');
-  pad.addEventListener('click', e=>{
-    const key = e.target.closest('.pin-key'); if(!key) return;
-    const k = key.dataset.k;
-    if(k==='del') pinDel(); else if(k==='go') pinEnter(); else pinPush(k);
-  });
-})();
-
-function renderWho(){
-  const g = document.getElementById('who-grid');
-  if(!authUsers.length){
-    g.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:rgba(237,232,223,.3);font-family:var(--mono);font-size:10px;padding:20px">Sin miembros — contacta al admin</div>`;
-  } else {
-    g.innerHTML = authUsers.map(u=>`
-      <div class="who-card" data-uid="${attr(u.id)}">
-        <div class="who-av">${esc((u.name||'?')[0].toUpperCase())}</div>
-        <div class="who-name">${esc(u.name)}</div>
-        <div class="who-role">${u.isAdmin?'ADMIN':'MIEMBRO'}</div>
-      </div>`).join('');
-    g.querySelectorAll('.who-card').forEach(c=>c.onclick=()=>startPin(c.dataset.uid));
+document.getElementById('btn-google').onclick = async ()=>{
+  document.getElementById('login-msg').textContent='';
+  try{ await signInWithPopup(auth, provider); }
+  catch(e){
+    const c=e.code||'';
+    document.getElementById('login-msg').innerHTML =
+      /popup-closed|cancelled-popup/i.test(c) ? 'Ventana cerrada — reintenta.'
+      : /unauthorized-domain/i.test(c) ? 'Dominio no autorizado. Añádelo en Firebase → Authentication → Settings → Authorized domains.'
+      : /operation-not-allowed|configuration-not-found/i.test(c) ? 'Activa el proveedor <b>Google</b> en Firebase → Authentication → Sign-in method.'
+      : esc(e.message||'Error');
   }
-  showScreen('s-who');
-}
-document.getElementById('pin-back').onclick = ()=>{ pinBuf=''; pinTarget=null; updateDots(); renderWho(); };
-
-function startPin(uid){
-  pinTarget = authUsers.find(u=>u.id===uid); if(!pinTarget) return;
-  pinBuf='';
-  document.getElementById('pin-av').textContent   = (pinTarget.name||'?')[0].toUpperCase();
-  document.getElementById('pin-name').textContent = pinTarget.name;
-  document.getElementById('pin-err').textContent  = '';
-  updateDots(); showScreen('s-pin');
-}
-function updateDots(){ document.querySelectorAll('.pin-dot').forEach((d,i)=>d.classList.toggle('filled', i<pinBuf.length)); }
-function pinPush(n){ if(pinBuf.length>=4) return; pinBuf+=n; updateDots(); if(pinBuf.length===4) setTimeout(pinEnter,120); }
-function pinDel(){ pinBuf=pinBuf.slice(0,-1); updateDots(); document.getElementById('pin-err').textContent=''; }
-async function pinEnter(){
-  if(!pinTarget || pinBuf.length<4) return;
-  const h = await hashPin(pinBuf, pinTarget.salt || '');
-  if(h === pinTarget.pin){
-    ME = { id:pinTarget.id, name:pinTarget.name, isAdmin:!!pinTarget.isAdmin };
-    sessionStorage.setItem('hp_user', JSON.stringify(ME));
-    enterApp();
-  } else {
-    document.getElementById('pin-err').textContent = 'PIN incorrecto';
-    pinBuf=''; updateDots();
-  }
-}
-
-/* First-run admin */
-document.getElementById('fr-create').onclick = async ()=>{
-  const name = document.getElementById('fr-name').value.trim();
-  const pin  = document.getElementById('fr-pin').value.trim();
-  const msg  = document.getElementById('fr-msg');
-  if(!name){ msg.style.color='var(--red)'; msg.textContent='Introduce tu nombre'; return; }
-  if(!/^\d{4}$/.test(pin)){ msg.style.color='var(--red)'; msg.textContent='El PIN debe ser 4 dígitos'; return; }
-  msg.style.color='rgba(237,232,223,.4)'; msg.textContent='Guardando…';
-  try{
-    const salt = newSalt();
-    const r = await addDoc(col('users'), { name, salt, pin: await hashPin(pin, salt), isAdmin:true, createdAt:new Date().toISOString() });
-    ME = { id:r.id, name, isAdmin:true };
-    sessionStorage.setItem('hp_user', JSON.stringify(ME));
-    msg.style.color='var(--green)'; msg.textContent='✓ Admin creado. Entrando…';
-    setTimeout(enterApp, 500);
-  }catch(e){ msg.style.color='var(--red)'; msg.textContent=e.message; }
 };
 
 function enterApp(){
-  const chip = document.getElementById('h-user-chip');
-  if(chip){ chip.textContent = ME.name + (ME.isAdmin?' · ADMIN':''); chip.style.display=''; }
+  const chip=document.getElementById('h-user-chip');
+  if(chip){ chip.textContent=ME.name+(ME.isAdmin?' · ADMIN':''); chip.style.display=''; }
   document.getElementById('btn-logout').style.display='';
   showScreen('s-app');
   bootProjects();
 }
-document.getElementById('btn-logout').onclick = ()=>{ ME=null; sessionStorage.removeItem('hp_user'); detachProject(); renderWho(); };
+function doLogout(){ ME=null; sessionStorage.removeItem('hp_user'); detachProject(); signOut(auth).catch(()=>{}); }
+document.getElementById('btn-logout').onclick = doLogout;
+document.getElementById('btn-denied-logout').onclick = doLogout;
 
 /* ════════════════════════════════════════════════════════════
    MULTI-PROJECT DATA LAYER  (Firestore: projects/{id})
@@ -1516,49 +1443,21 @@ function renderBadges(){
 }
 
 /* ════════ INIT ════════ */
-async function init(){
-  // Sign in anonymously first — Firestore reads/writes are gated on auth.
-  // (Raises the bar vs. fully open; NOT full privacy — anyone can get an anon
-  //  token. Swap to Google/email sign-in to restrict to your accounts.)
-  try{
-    await signInAnonymously(auth);
-  }catch(e){
-    const msg = /admin-restricted|configuration-not-found|operation-not-allowed/i.test(e.code||e.message||'')
-      ? 'Activa el proveedor <b>Anonymous</b> en Firebase Console → Authentication → Sign-in method → Anonymous → Enable. Después recarga.'
-      : (e.message||'Error de autenticación');
-    document.getElementById('s-loading').innerHTML=`
-      <div style="text-align:center;padding:20px;max-width:380px">
-        <div style="font-size:36px;margin-bottom:12px">🔐</div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--red);margin-bottom:8px">AUTENTICACIÓN REQUERIDA</div>
-        <div style="font-family:var(--mono);font-size:9px;color:rgba(237,232,223,.45);line-height:1.8">${msg}</div>
-        <button onclick="location.reload()" style="margin-top:20px;font-family:var(--mono);font-size:9px;padding:8px 20px;background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:8px;cursor:pointer">REINTENTAR</button>
-      </div>`;
-    return;
-  }
-  // existing session?
-  try{
-    const stored=sessionStorage.getItem('hp_user');
-    if(stored){ const u=JSON.parse(stored); if(u?.id){ ME=u; enterApp(); return; } }
-  }catch(e){}
-  try{
-    const snap=await getDocs(query(col('users'), orderBy('name')));
-    authUsers=snap.docs.map(d=>({id:d.id,...d.data()}));
-  }catch(e){
-    document.getElementById('s-loading').innerHTML=`
-      <div style="text-align:center;padding:20px">
-        <div style="font-size:36px;margin-bottom:12px">⚠️</div>
-        <div style="font-family:var(--mono);font-size:10px;color:var(--red);margin-bottom:8px">ERROR DE CONEXIÓN</div>
-        <div style="font-family:var(--mono);font-size:9px;color:rgba(237,232,223,.4);max-width:340px;line-height:1.8">${esc(e.message)}<br><br>Firebase Console → Firestore → Reglas. Ejecuta <kbd>HP.printRules()</kbd> en la consola para las reglas sugeridas.</div>
-        <button onclick="location.reload()" style="margin-top:20px;font-family:var(--mono);font-size:9px;padding:8px 20px;background:transparent;border:1px solid var(--gold);color:var(--gold);border-radius:8px;cursor:pointer">REINTENTAR</button>
-      </div>`;
-    return;
-  }
-  if(authUsers.length===0){ showScreen('s-firstrun'); return; }
-  onSnapshot(query(col('users'), orderBy('name')), snap=>{
-    authUsers=snap.docs.map(d=>({id:d.id,...d.data()}));
-    if(!ME) renderWho();
+function init(){
+  // Firebase remembers the session (IndexedDB), so returning users auto-enter.
+  onAuthStateChanged(auth, user=>{
+    if(!user){ ME=null; showScreen('s-login'); return; }
+    const email=(user.email||'').toLowerCase();
+    if(!emailAllowed(email)){
+      document.getElementById('denied-msg').innerHTML =
+        esc(email||'(cuenta sin email)')+' no está en la lista de acceso.<br>Pide al admin que añada tu correo.';
+      showScreen('s-denied');
+      return;
+    }
+    ME = { id:user.uid, name:user.displayName||email.split('@')[0]||'Usuario', email, isAdmin:ADMIN_EMAILS.includes(email) };
+    sessionStorage.setItem('hp_user', JSON.stringify(ME));
+    enterApp();
   });
-  renderWho();
 }
 init();
 </script>
