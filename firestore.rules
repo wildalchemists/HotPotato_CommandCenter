@@ -1,35 +1,36 @@
 // ============================================================================
 // Firestore security rules for HOT POTATO · COMMAND CENTER PRO
 // Paste into Firebase Console → Firestore Database → Rules → Publish.
+//
+// REQUIRES Firebase Authentication. Enable the Anonymous provider:
+//   Console → Authentication → Sign-in method → Anonymous → Enable.
+// The app calls signInAnonymously() on load, so every request carries a token.
 // ============================================================================
 //
-// HONEST SECURITY CAVEAT
-// ----------------------
-// The app logs users in with a client-side PIN, NOT Firebase Authentication.
-// That means these rules CANNOT know *which* user is making a request — they
-// can only validate the SHAPE and SIZE of documents. This stops malformed or
-// oversized writes and locks credentials from client edits, but anyone who has
-// the page URL can still read and write project data.
+// PRIVACY NOTE
+// ------------
+// Gating on `request.auth != null` with the **Anonymous** provider means a
+// request must carry a Firebase token. That blocks unauthenticated/script
+// abuse, enables Firebase quota/abuse protection, and is the foundation for
+// per-user rules — BUT anyone can mint an anonymous token, so this is NOT full
+// privacy. To restrict to your team, switch the sign-in flow to Google or Email
+// link and gate by identity, e.g.:
 //
-// To make the data genuinely private, do this:
-//   1. Firebase Console → Authentication → enable "Anonymous" (or Email link).
-//   2. In the app's <script type="module">, after initializeApp(), call
-//      getAuth(app) and signInAnonymously(auth) before any Firestore access.
-//   3. Replace the projects rule below with:
-//        allow read, write: if request.auth != null;
-//   4. (Best) Move PIN verification to a Cloud Function / custom claims so
-//      hashes are never world-readable.
+//   match /projects/{pid} {
+//     allow read, write: if request.auth != null
+//                        && request.auth.token.email in ['you@studio.com'];
+//   }
 // ============================================================================
 
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // User roster: names are readable so the login picker can render.
-    // Creation requires the expected fields; existing credentials are immutable.
+    // User roster: names readable for the login picker; credentials immutable.
     match /users/{uid} {
       allow read:   if true;
-      allow create: if request.resource.data.keys().hasAll(['name','pin','salt'])
+      allow create: if request.auth != null
+                    && request.resource.data.keys().hasAll(['name','pin','salt'])
                     && request.resource.data.name is string
                     && request.resource.data.name.size() < 60
                     && request.resource.data.pin is string
@@ -37,18 +38,17 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Project documents: each holds one whole project's state.
-    // Validate it's a sane, bounded object. (Add `&& request.auth != null`
-    // once Firebase Auth is enabled — see caveat above.)
+    // Project documents: one whole project's state each. Auth-gated + bounded.
     match /projects/{pid} {
-      allow read:  if true;
-      allow write: if request.resource == null
-                   || (request.resource.data.size() < 900000
-                       && request.resource.data.project is map);
+      allow read:  if request.auth != null;
+      allow write: if request.auth != null
+                   && (request.resource == null
+                       || (request.resource.data.size() < 900000
+                           && request.resource.data.project is map));
     }
 
     // Legacy data from the old Command Center — read-only, for the importer.
-    match /project/{id}       { allow read: if true; allow write: if false; }
-    match /contributions/{id} { allow read: if true; allow write: if false; }
+    match /project/{id}       { allow read: if request.auth != null; allow write: if false; }
+    match /contributions/{id} { allow read: if request.auth != null; allow write: if false; }
   }
 }
