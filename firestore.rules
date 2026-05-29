@@ -1,0 +1,54 @@
+// ============================================================================
+// Firestore security rules for HOT POTATO · COMMAND CENTER PRO
+// Paste into Firebase Console → Firestore Database → Rules → Publish.
+// ============================================================================
+//
+// HONEST SECURITY CAVEAT
+// ----------------------
+// The app logs users in with a client-side PIN, NOT Firebase Authentication.
+// That means these rules CANNOT know *which* user is making a request — they
+// can only validate the SHAPE and SIZE of documents. This stops malformed or
+// oversized writes and locks credentials from client edits, but anyone who has
+// the page URL can still read and write project data.
+//
+// To make the data genuinely private, do this:
+//   1. Firebase Console → Authentication → enable "Anonymous" (or Email link).
+//   2. In the app's <script type="module">, after initializeApp(), call
+//      getAuth(app) and signInAnonymously(auth) before any Firestore access.
+//   3. Replace the projects rule below with:
+//        allow read, write: if request.auth != null;
+//   4. (Best) Move PIN verification to a Cloud Function / custom claims so
+//      hashes are never world-readable.
+// ============================================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // User roster: names are readable so the login picker can render.
+    // Creation requires the expected fields; existing credentials are immutable.
+    match /users/{uid} {
+      allow read:   if true;
+      allow create: if request.resource.data.keys().hasAll(['name','pin','salt'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() < 60
+                    && request.resource.data.pin is string
+                    && request.resource.data.salt is string;
+      allow update, delete: if false;
+    }
+
+    // Project documents: each holds one whole project's state.
+    // Validate it's a sane, bounded object. (Add `&& request.auth != null`
+    // once Firebase Auth is enabled — see caveat above.)
+    match /projects/{pid} {
+      allow read:  if true;
+      allow write: if request.resource == null
+                   || (request.resource.data.size() < 900000
+                       && request.resource.data.project is map);
+    }
+
+    // Legacy data from the old Command Center — read-only, for the importer.
+    match /project/{id}       { allow read: if true; allow write: if false; }
+    match /contributions/{id} { allow read: if true; allow write: if false; }
+  }
+}
