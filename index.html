@@ -579,6 +579,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;background:var(--card
       <select class="proj-sel" id="proj-switcher" title="Cambiar proyecto"></select>
       <button class="ic-btn" id="btn-new-proj" title="Nuevo proyecto">+</button>
       <button class="ic-btn" id="btn-rename-proj" title="Renombrar proyecto">✎</button>
+      <button class="ic-btn" id="btn-del-proj" title="Eliminar proyecto actual" style="color:var(--red)">🗑</button>
       <button class="ic-btn" id="btn-export" title="Exportar JSON (Ctrl+E)">↓</button>
       <button class="ic-btn" id="btn-import" title="Importar JSON">↑</button>
       <input type="file" id="import-file" accept=".json" style="display:none">
@@ -1363,6 +1364,7 @@ function openProjectModal(mode){
 }
 document.getElementById('btn-new-proj').onclick    = ()=>openProjectModal('new');
 document.getElementById('btn-rename-proj').onclick = ()=>openProjectModal('rename');
+document.getElementById('btn-del-proj').onclick    = ()=>window.HP.deleteProject();
 document.getElementById('pm-save').onclick = async ()=>{
   const m = document.getElementById('modal-project');
   const name = document.getElementById('pm-name').value.trim();
