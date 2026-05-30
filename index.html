@@ -1270,20 +1270,21 @@ function attachProject(id){
 /* Debounced save of the whole current project doc */
 let saveTimer = null;
 function save(){
-  if(!currentId || !D) return;
+  if(!currentId || !D) { if(!D) toast('⚠ Proyecto no cargado — revisa permisos Firestore'); return; }
   setSync('connecting','Guardando…');
+  // Suppress incoming echoes from NOW until shortly after the write lands, so a
+  // snapshot can't clobber an edit that's still in the debounce window.
+  suppressSnapshot = true;
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async ()=>{
-    suppressSnapshot = true;
     try{
       await setDoc(ref('projects', currentId), D);
-      // keep switcher name fresh
       const p = projectList.find(x=>x.id===currentId);
       if(p && D.project?.name && p.name!==D.project.name){ p.name=D.project.name; renderProjectSwitcher(); }
       setSync('online','Guardado');
       toast('✓ GUARDADO');
     }catch(e){ setSync('error','Error al guardar'); console.error(e); }
-    setTimeout(()=>{ suppressSnapshot=false; }, 400);
+    setTimeout(()=>{ suppressSnapshot=false; }, 600);
   }, 400);
 }
 window.HP.save = save;
