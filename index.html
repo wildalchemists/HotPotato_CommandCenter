@@ -2130,7 +2130,8 @@ init();
   const HP=(window.HP=window.HP||{});
   const $=id=>document.getElementById(id);
   const esc=s=>HP.esc(s);
-  const fmt=HP.fmt, fmtU=n=>HP.fmtN(Math.round(+n||0)), fmtP=HP.fmtP, daysUntil=iso=>iso?HP.daysDiff(HP.today(),iso):null;
+  /* delegate at CALL time — this classic script runs BEFORE the deferred module that defines HP.* */
+  const fmt=(n,d)=>HP.fmt(n,d), fmtN=(n,d)=>HP.fmtN(n,d), fmtU=n=>HP.fmtN(Math.round(+n||0)), fmtP=(n,d)=>HP.fmtP(n,d), daysUntil=iso=>iso?HP.daysDiff(HP.today(),iso):null;
   const cc=n=>n>0?'c-green':n<0?'c-red':'c-amber', sgn=(n,fn)=>(n>=0?'+':'')+fn(n);
   const setText=(id,v)=>{const el=$(id);if(el)el.textContent=v;};
   const matchSearch=()=>true;
