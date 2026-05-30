@@ -1258,7 +1258,13 @@ function attachProject(id){
   renderProjectSwitcher();
   setSync('connecting','Sincronizando…');
   unsubProj = onSnapshot(ref('projects', id), snap=>{
-    if(suppressSnapshot) return;
+    // Never let an incoming snapshot clobber local edits: skip while a write is
+    // pending/in-flight, or within a cooldown of the last local edit. This is
+    // the fix for scalar edits (Overview/Financiero invest, project name, …)
+    // silently reverting when a slightly-stale echo arrives.
+    if(suppressSnapshot || pendingSave || (Date.now() - lastLocalEdit < 2500)){
+      setSync('online','En línea'); return;
+    }
     if(snap.exists()){
       D = ensureFields(snap.data());
       setSync('online','En línea');
@@ -1268,10 +1274,11 @@ function attachProject(id){
 }
 
 /* Debounced save of the whole current project doc, with flush-on-close. */
-let saveTimer = null, pendingSave = false;
+let saveTimer = null, pendingSave = false, lastLocalEdit = 0;
 function save(){
   if(!currentId || !D) { if(!D) toast('⚠ Proyecto no cargado — revisa permisos Firestore'); return; }
   pendingSave = true;
+  lastLocalEdit = Date.now();
   setSync('connecting','Guardando…');
   // Suppress incoming echoes from NOW until shortly after the write lands, so a
   // snapshot can't clobber an edit that's still in the debounce window.
