@@ -1267,27 +1267,45 @@ function attachProject(id){
   }, err=>{ setSync('error','Sin conexión'); console.error(err); });
 }
 
-/* Debounced save of the whole current project doc */
-let saveTimer = null;
+/* Debounced save of the whole current project doc, with flush-on-close. */
+let saveTimer = null, pendingSave = false;
 function save(){
   if(!currentId || !D) { if(!D) toast('⚠ Proyecto no cargado — revisa permisos Firestore'); return; }
+  pendingSave = true;
   setSync('connecting','Guardando…');
   // Suppress incoming echoes from NOW until shortly after the write lands, so a
   // snapshot can't clobber an edit that's still in the debounce window.
   suppressSnapshot = true;
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(async ()=>{
-    try{
-      await setDoc(ref('projects', currentId), D);
-      const p = projectList.find(x=>x.id===currentId);
-      if(p && D.project?.name && p.name!==D.project.name){ p.name=D.project.name; renderProjectSwitcher(); }
-      setSync('online','Guardado');
-      toast('✓ GUARDADO');
-    }catch(e){ setSync('error','Error al guardar'); console.error(e); }
-    setTimeout(()=>{ suppressSnapshot=false; }, 600);
-  }, 400);
+  saveTimer = setTimeout(flushSave, 350);
 }
-window.HP.save = save;
+/* Write immediately if there's anything pending (also called on tab hide/close). */
+async function flushSave(){
+  clearTimeout(saveTimer);
+  if(!pendingSave || !currentId || !D) return;
+  pendingSave = false;
+  try{
+    await setDoc(ref('projects', currentId), D);
+    const p = projectList.find(x=>x.id===currentId);
+    if(p && D.project?.name && p.name!==D.project.name){ p.name=D.project.name; renderProjectSwitcher(); }
+    setSync('online','Guardado');
+    toast('✓ GUARDADO');
+  }catch(e){
+    pendingSave = true;                 // keep dirty so a later flush retries
+    setSync('error','Error al guardar');
+    console.error('SAVE FAILED:', e);
+    toast('⚠ NO SE GUARDÓ: ' + (e.code || e.message || 'error'));
+  }
+  setTimeout(()=>{ suppressSnapshot=false; }, 600);
+}
+window.HP.save  = save;
+window.HP.flush = flushSave;
+/* Persist pending edits before the tab is hidden or closed — this is the key
+   fix for "changes lost after closing": the debounce timer would otherwise be
+   killed by the page unloading before it fired. */
+window.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') flushSave(); });
+window.addEventListener('pagehide', flushSave);
+window.addEventListener('beforeunload', flushSave);
 window.HP.getD = () => D;
 
 /* Activity log helper (used by all modules) */
@@ -2146,9 +2164,11 @@ init();
   window.logActivity=a=>HP.logActivity(a);
   const D=()=>HP.getD();
 
-  /* save on ANY edit inside the app (debounced) — covers inline editors */
-  let st; document.getElementById('s-app').addEventListener('input',()=>{ clearTimeout(st); st=setTimeout(()=>HP.save(),500); });
-  document.getElementById('s-app').addEventListener('change',()=>{ clearTimeout(st); st=setTimeout(()=>HP.save(),300); });
+  /* save on ANY edit inside the app — covers inline editors. save() debounces
+     internally (single debounce); flush-on-close in the module guarantees the
+     write lands even if you close the tab right after editing. */
+  document.getElementById('s-app').addEventListener('input', ()=>HP.save());
+  document.getElementById('s-app').addEventListener('change', ()=>HP.save());
 
   /* ════ ALERTS ════ */
   HP.renderAlerts=function(d){
