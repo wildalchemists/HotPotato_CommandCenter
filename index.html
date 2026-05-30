@@ -1222,13 +1222,19 @@ async function migrateLegacy(){
 
 async function bootProjects(){
   setSync('connecting','Cargando…');
+  // List ALL project docs. NOTE: do NOT use orderBy('name') here — Firestore
+  // excludes documents that lack the ordered field, and our docs store the name
+  // at project.name (no top-level `name`). orderBy('name') therefore returned
+  // ZERO docs every load, so the app kept re-seeding/re-importing and your saved
+  // project was orphaned. We read the whole collection and sort client-side.
   try{
-    const snap = await getDocs(query(col('projects'), orderBy('name')));
-    projectList = snap.docs.map(d=>({ id:d.id, name:(d.data().project?.name)||d.data().name||'Proyecto' }));
-  }catch(e){ setSync('error','Error reglas'); console.error(e); projectList=[]; }
+    const snap = await getDocs(col('projects'));
+    projectList = snap.docs.map(d=>({ id:d.id, name:(d.data().project?.name)||d.data().name||'Proyecto' }))
+                           .sort((a,b)=>a.name.localeCompare(b.name));
+  }catch(e){ setSync('error','Error reglas'); console.error(e); projectList=[]; return; }
 
   if(projectList.length===0){
-    // first run: try to migrate the legacy Command Center doc, else seed defaults
+    // Truly first run: import the legacy doc once, else seed defaults.
     let fresh = await migrateLegacy();
     fresh = ensureFields(fresh || DEFAULTS());
     try{
