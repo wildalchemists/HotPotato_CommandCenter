@@ -1308,6 +1308,28 @@ window.addEventListener('pagehide', flushSave);
 window.addEventListener('beforeunload', flushSave);
 window.HP.getD = () => D;
 
+/* Self-diagnostic: run  HP.selftest()  in the console (F12) to prove whether
+   writes actually reach Firestore. It writes a tiny field to the current
+   project doc and reads it back, reporting the exact result/error code. */
+window.HP.selftest = async () => {
+  if(!currentId){ console.error('[selftest] no project loaded — read likely blocked by rules'); return; }
+  const stamp = '__selftest_'+Date.now();
+  try{
+    await setDoc(ref('projects', currentId), { [stamp]: true }, { merge:true });
+    const snap = await getDoc(ref('projects', currentId));
+    const ok = snap.exists() && snap.data()[stamp] === true;
+    await setDoc(ref('projects', currentId), { [stamp]: null }, { merge:true }); // cleanup
+    console.log(ok ? '✅ [selftest] WRITE OK — Firestore is saving correctly. If you still lose edits, tell me.'
+                   : '⚠️ [selftest] write returned but value not found — unexpected.');
+    return ok;
+  }catch(e){
+    console.error('❌ [selftest] WRITE BLOCKED:', e.code || e.message);
+    console.error('   → Publica firestore.rules y confirma que tu email Google está en ok(). Detalle:', e);
+    toast('❌ Escritura bloqueada: '+(e.code||'permiso'));
+    return false;
+  }
+};
+
 /* Activity log helper (used by all modules) */
 function logActivity(action){
   if(!D) return;
